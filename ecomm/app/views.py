@@ -1,6 +1,6 @@
 from typing import Any
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.shortcuts import render,redirect
+from django.views.generic import View,TemplateView
 from .models import *
 # Create your views here.
 
@@ -35,6 +35,64 @@ class ProductDetailView(TemplateView):
     
 class AddToCartView(TemplateView):
     template_name = "addtocart.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #get product id from requested url
+        product_id = self.kwargs['pro_id']
+        #get product
+        product_obj = Product.objects.get(id=product_id)
+        #check if cart exists
+        cart_id = self.request.session.get("cart_id",None)
+        if cart_id:
+            cart_obj = Cart.objects.get(id=cart_id)
+            this_product_in_cart = cart_obj.cartproduct_set.filter(product = product_obj)
+            #item already exists in cart
+            if this_product_in_cart.exists():
+                cartproduct = this_product_in_cart.last()
+                cartproduct.quantity += 1
+                cartproduct.subtotal += product_obj.selling_price
+                cartproduct.save()
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+            #new item is added in cart
+            else:
+                cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+        else:
+            cart_obj = Cart.objects.create(total=0)
+            self.request.session['cart_id'] = cart_obj.id
+            cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+            cart_obj.total += product_obj.selling_price
+            cart_obj.save()
+            
+
+        #check if product already exists in cart
+        return context
+
+class ManageCartView(View):
+    def get(self, request, *args, **kwargs):
+        print("this manage cart section")
+        cp_id = self.kwargs["cp_id"]
+        action = request.GET.get("action")
+        print(cp_id,action)
+        return redirect("ecomm:mycart")
+
+
+    
+class MyCartView(TemplateView):
+    template_name = "mycart.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_id = self.request.session.get("cart_id",None)
+        if cart_id:
+            cart = Cart.objects.get(id=cart_id)
+        else:
+            cart = None
+        context['cart'] = cart
+        return context
 
 class AboutView(TemplateView):
     template_name = "about.html"
