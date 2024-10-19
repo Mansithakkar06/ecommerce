@@ -19,7 +19,7 @@
             <p class="text-primary">Return Policy : {{product.return_policy}}</p>
             <hr>
             <p>{{product.description}}</p>
-            <a href="{% url 'ecomm:addtocart' product.id %}" class="btn btn-success">Add to cart</a>
+            <a href="{% url 'ecomm:addtocart' product.id %}" class="btn btn-success" onclick="alertmsg()">Add to cart</a>
         </div>
     </div>
     <hr>

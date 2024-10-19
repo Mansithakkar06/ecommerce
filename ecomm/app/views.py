@@ -1,7 +1,10 @@
 from typing import Any
 from django.shortcuts import render,redirect
-from django.views.generic import View,TemplateView
+from django.views.generic import View,TemplateView,CreateView
+from django.urls import reverse_lazy
+from .forms import CheckoutForm
 from .models import *
+
 # Create your views here.
 
 class HomeView(TemplateView):
@@ -76,10 +79,40 @@ class ManageCartView(View):
         print("this manage cart section")
         cp_id = self.kwargs["cp_id"]
         action = request.GET.get("action")
-        print(cp_id,action)
+        cp_obj = CartProduct.objects.get(id=cp_id)
+        cart_obj = cp_obj.cart
+
+        if action == "inc":
+            cp_obj.quantity += 1
+            cp_obj.subtotal += cp_obj.rate
+            cp_obj.save()
+            cart_obj.total += cp_obj.rate
+            cart_obj.save()
+        elif action == "dcr":
+            cp_obj.quantity -= 1
+            cp_obj.subtotal -= cp_obj.rate
+            cp_obj.save()
+            cart_obj.total -= cp_obj.rate
+            cart_obj.save()
+            if cp_obj.quantity == 0:
+                cp_obj.delete()
+        elif action == "rmv":
+            cart_obj.total -= cp_obj.subtotal
+            cart_obj.save()
+            cp_obj.delete()
+        else:
+            pass
         return redirect("ecomm:mycart")
 
-
+class EmptyCartView(View):
+    def get(self,request,*args,**kwargs):
+        cart_id = request.session.get("cart_id",None)
+        if cart_id:
+            cart = Cart.objects.get(id=cart_id)
+            cart.cartproduct_set.all().delete()
+            cart.total = 0
+            cart.save()
+        return redirect("ecomm:mycart")
     
 class MyCartView(TemplateView):
     template_name = "mycart.html"
@@ -93,6 +126,36 @@ class MyCartView(TemplateView):
             cart = None
         context['cart'] = cart
         return context
+
+class CheckoutView(CreateView):
+    template_name = "checkout.html"
+    form_class = CheckoutForm
+    success_url = reverse_lazy("ecomm:home")
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        cart_id = self.request.session.get("cart_id",None)
+        if cart_id:
+            cart_obj = Cart.objects.get(id=cart_id)
+        else:
+            cart_obj = None
+        context['cart'] = cart_obj
+        return context
+    
+    def form_valid(self, form):
+        cart_id = self.request.session.get("cart_id")
+        if cart_id:
+            cart_obj = Cart.objects.get(id=cart_id)
+            form.instance.cart = cart_obj
+            form.instance.subtotal = cart_obj.total
+            form.instance.discount = 0
+            form.instance.total = cart_obj.total
+            form.instance.order_status = "Order Received"
+            del self.request.session['cart_id']
+
+        else:
+            return redirect("ecomm:home")
+        return super().form_valid(form)
+    
 
 class AboutView(TemplateView):
     template_name = "about.html"
