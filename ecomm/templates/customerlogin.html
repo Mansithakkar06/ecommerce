@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %} Customer Login {% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <h3>Customer Login Form</h3> <hr>
+                <form action="" method="POST">
+                    {% csrf_token %} 
+                    {{form|crispy }} <br>
+                    {% if error %}
+                        <li style="color:red">{{error}}</li>
+                    {% endif %}
+                    <button class="btn btn-primary">Login as a Customer</button> <br>
+                </form>
+                or
+                <br>
+                <a href="{% url "ecomm:customerregistration" %}">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
