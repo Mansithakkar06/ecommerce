@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{% static 'app/css/owl.carousel.min.css' %}">
     <link rel="stylesheet" href="{% static 'app/css/all.min.css' %}">
     <link rel="stylesheet" href="{% static 'app/css/style.css' %}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!--alertifyjs-->
@@ -73,8 +73,9 @@
                     </li>
 
                 </ul>
-                <form class="d-flex nav-search" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <form action="{%url 'ecomm:search'%}" method="GET" class="d-flex nav-search" role="search">
+                    <input class="form-control me-2" type="search" name="keyword" placeholder="Search"
+                        aria-label="Search" required>
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </div>
@@ -88,39 +89,41 @@
                         <li><a class="dropdown-item" href="#">Profile</a></li>
                         <li><a class="dropdown-item" href="#">Orders</a></li>
                         <li><a class="dropdown-item" href="#">Change Password</a></li>
-                        
+
                     </ul>
                 </li>
 
 
-
+                <!-- cart icon in nav bar -->
                 <li class="nav-item mx-2">
-                    <a href="{% url 'ecomm:mycart' %}" class="nav-link text-black"><i style="font-size:24px" class="fa">&#xf07a;</i>
+                    <a href="{% url 'ecomm:mycart' %}" class="nav-link text-black"><i style="font-size:24px"
+                            class="fa">&#xf07a;</i>
                     </a>
                 </li>
+                <!-- wishlist icon in navbar -->
                 <li class="nav-item mx-2">
                     <a href="#" class="nav-link text-black"><i style="font-size:24px" class="fa">&#xf004;</i>
                     </a>
-                    
+
                 </li>
 
                 {% if request.user.is_authenticated %}
-                        <li class="nav-item mx-2"><a class="nav-link text-black" href="{% url "ecomm:customerlogout" %}">Logout</a></li>
+                <li class="nav-item mx-2"><a class="nav-link text-black" href="{% url " ecomm:customerlogout"
+                        %}">Logout</a></li>
 
                 {% else %}
-                        <li class="nav-item mx-2">
-                            <a href="/login/" class="nav-link text-black">Login</a>
-                        </li>
+                <li class="nav-item mx-2">
+                    <a href="/login/" class="nav-link text-black">Login</a>
+                </li>
                 {% endif %}
 
-                
+
                 <li class="nav-item mx-2">
                     <a href="/register/" class="nav-link text-black">Registration</a>
                 </li>
             </ul>
-
-
         </div>
+
     </nav>
 
     {% block slider %}{% endblock slider %}
@@ -136,15 +139,17 @@
 
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script> 
+        crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
         crossorigin="anonymous"></script>

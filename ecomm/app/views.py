@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render,redirect
 from django.views.generic import View,TemplateView,CreateView, FormView
 from django.urls import reverse_lazy
+from django.db.models import Q
 from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm
 from .models import *
 
@@ -200,3 +201,13 @@ class AboutView(TemplateView):
 
 class ContactView(TemplateView):
     template_name = "contactus.html"
+class SearchView(TemplateView):
+    template_name="search.html"
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        kw=self.request.GET.get("keyword")
+        results=Product.objects.filter(Q(title__icontains=kw)| Q(description__icontains=kw) | Q(return_policy__icontains=kw))
+        print(results)
+        context["results"]=results
+        return context
