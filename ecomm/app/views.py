@@ -17,14 +17,17 @@ class HomeView(TemplateView):
         context['product_list']=Product.objects.all().order_by("-id")
         return context
     
-    
+#class CategoryView(View):
+ #   def get(self,request,slug):
+  #      product = Product.objects,filter(category=slug)
+   #     return render(request,"category.html",locals())
 class AllProductsView(TemplateView):
-    template_name = "allproducts.html"
+     template_name = "allproducts.html"
 
-    def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
-        context['allcategories'] = Category.objects.all()
-        return context
+     def get_context_data(self, **kwargs):
+         context =  super().get_context_data(**kwargs)
+         context['allcategories'] = Category.objects.all()
+         return context
 
 class ProductDetailView(TemplateView):
     template_name = "productdetail.html"
@@ -72,9 +75,10 @@ class AddToCartView(TemplateView):
             cart_obj.total += product_obj.selling_price
             cart_obj.save()
             
-
         #check if product already exists in cart
         return context
+
+
 
 class ManageCartView(View):
     def get(self, request, *args, **kwargs):

@@ -12,7 +12,15 @@ class Customer(models.Model):
     def __str__(self):
         return self.full_name
     
-
+CATEGORY_CHOICES=(
+    ('TL',"Textile"),
+    ('PT',"Painting"),
+    ('PC',"Pottery&Cwramics"),
+    ('SC',"Scluptures&Carving"),
+    ('HL',"Handlooms"),
+    ('MC',"MetalCrafts"),
+    ('WE',"Weaving"),
+)
 
 class Category(models.Model):
     title = models.CharField(max_length=200)
