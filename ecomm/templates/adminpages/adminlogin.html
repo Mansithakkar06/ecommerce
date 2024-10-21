@@ -1,17 +1,21 @@
 {% extends 'base.html' %}
 
-{% block title %} Customer Registration {% endblock %}
+{% block title %} Admin Login {% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="container">
         <div class="row">
             <div class="col-md-6 mx-auto">
-                <h3>Customer Registration Form</h3> <hr>
+                <h3>Admin Login Form</h3> <hr>
                 <form action="" method="POST">
                     {% csrf_token %} 
                     {{form|crispy }} <br>
-                    <button class="btn btn-primary">Register as a Customer</button>
+                    {% if error %}
+                        <li style="color:red">{{error}}</li>
+                    {% endif %}
+                    <button class="btn btn-primary">Login as a Admin</button> <br>
                 </form>
+                <br>
             </div>
         </div>
     </div>
