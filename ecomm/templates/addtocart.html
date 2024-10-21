@@ -5,4 +5,16 @@
 <div class="container">
     <h1>product added successfully</h1>
 </div>
+{% if messages %}
+
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+<script> alertify.set('notifier', 'position', 'top-right');
+  alertify.success("product added successfully");
+</script>
+<script>
+    setTimeout(function(){
+    window.location.href="/";
+    },350);
+  </script>
+{% endif %}
 {% endblock content %}

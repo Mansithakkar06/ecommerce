@@ -1,23 +1,37 @@
 from typing import Any
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render,redirect
-from django.views.generic import View,TemplateView,CreateView, FormView
+from django.views.generic import View,TemplateView,CreateView, FormView, DetailView
 from django.urls import reverse_lazy
+from django.contrib import messages
 from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm
 from .models import *
 
-# Create your views here.
 
-class HomeView(TemplateView):
+
+class EcomMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        cart_id = request.session.get("cart_id")
+        if cart_id:
+            cart_obj = Cart.objects.get(id=cart_id)
+            if request.user.is_authenticated and request.user.customer:
+                cart_obj.customer = request.user.customer
+                cart_obj.save()
+        return super().dispatch(request, *args, **kwargs)
+    
+
+
+class HomeView(EcomMixin, TemplateView):
     template_name = "home.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['product_list']=Product.objects.all().order_by("-id")
+        self.request.COOKIES.pop("messages", "")
         return context
     
     
-class AllProductsView(TemplateView):
+class AllProductsView(EcomMixin, TemplateView):
     template_name = "allproducts.html"
 
     def get_context_data(self, **kwargs):
@@ -25,7 +39,7 @@ class AllProductsView(TemplateView):
         context['allcategories'] = Category.objects.all()
         return context
 
-class ProductDetailView(TemplateView):
+class ProductDetailView(EcomMixin, TemplateView):
     template_name = "productdetail.html"
 
     def get_context_data(self, **kwargs):
@@ -37,7 +51,7 @@ class ProductDetailView(TemplateView):
          context['product'] = product
          return context
     
-class AddToCartView(TemplateView):
+class AddToCartView(EcomMixin, TemplateView):
     template_name = "addtocart.html"
 
     def get_context_data(self, **kwargs):
@@ -64,6 +78,7 @@ class AddToCartView(TemplateView):
                 cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
                 cart_obj.total += product_obj.selling_price
                 cart_obj.save()
+                messages.success(self.request, 'Your action was successful!')
         else:
             cart_obj = Cart.objects.create(total=0)
             self.request.session['cart_id'] = cart_obj.id
@@ -75,7 +90,7 @@ class AddToCartView(TemplateView):
         #check if product already exists in cart
         return context
 
-class ManageCartView(View):
+class ManageCartView(EcomMixin, View):
     def get(self, request, *args, **kwargs):
         print("this manage cart section")
         cp_id = self.kwargs["cp_id"]
@@ -105,7 +120,7 @@ class ManageCartView(View):
             pass
         return redirect("ecomm:mycart")
 
-class EmptyCartView(View):
+class EmptyCartView(EcomMixin, View):
     def get(self,request,*args,**kwargs):
         cart_id = request.session.get("cart_id",None)
         if cart_id:
@@ -115,7 +130,7 @@ class EmptyCartView(View):
             cart.save()
         return redirect("ecomm:mycart")
     
-class MyCartView(TemplateView):
+class MyCartView(EcomMixin, TemplateView):
     template_name = "mycart.html"
 
     def get_context_data(self, **kwargs):
@@ -128,10 +143,19 @@ class MyCartView(TemplateView):
         context['cart'] = cart
         return context
 
-class CheckoutView(CreateView):
+class CheckoutView(EcomMixin, CreateView):
     template_name = "checkout.html"
     form_class = CheckoutForm
     success_url = reverse_lazy("ecomm:home")
+    
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.customer:
+            pass
+        else:
+            return redirect("/login/?next=/checkout/")
+        return super().dispatch(request, *args, **kwargs)
+        
+    
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         cart_id = self.request.session.get("cart_id",None)
@@ -195,8 +219,51 @@ class CustomerLoginView(FormView):
         
         return super().form_valid(form)
     
-class AboutView(TemplateView):
+    def get_success_url(self):
+        if "next" in self.request.GET:
+            next_url = self.request.GET.get("next")
+            return next_url
+        else:
+            return self.success_url
+    
+    
+class AboutView(EcomMixin, TemplateView):
     template_name = "about.html"
 
-class ContactView(TemplateView):
+class ContactView(EcomMixin, TemplateView):
     template_name = "contactus.html"
+
+
+class CustomerProfileView(TemplateView):
+    template_name = "customerprofile.html"
+    
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            pass
+        else:
+            return redirect("/login/?next=/profile/")
+        return super().dispatch(request,*args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        customer = self.request.user.customer
+        context['customer'] = customer
+        orders = Order.objects.filter(cart__customer=customer).order_by("-id")
+        context['orders'] = orders
+        return context
+    
+class CustomerOrderDetailView(DetailView):
+    template_name = "customerorderdetail.html"
+    model = Order
+    context_object_name = "ord_obj"
+    
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.customer:
+            order_id = self.kwargs["pk"]
+            order = Order.objects.get(id=order_id)
+            if request.user.customer != order.cart.customer:
+                return redirect("ecomm:customerprofile")
+            
+        else:
+            return redirect("/login/?next=/profile/")
+        return super().dispatch(request, *args, **kwargs)

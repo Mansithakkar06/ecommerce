@@ -12,7 +12,7 @@
                     height="200px" width="200px"></a>
             <h5><a href="{% url 'ecomm:productdetail' p.slug %}">{{p.title}}</a></h5>
             <p class="mt-1"><del>{{p.marked_price}} </del> &nbsp;&nbsp;<b> ₹&nbsp;{{p.selling_price}}</b></p>
-            <a class="btn btn-success" href="{% url 'ecomm:addtocart' p.id %}" onclick="alertmsg()">Add to cart</a>
+            <a class="btn btn-success" href="#" onclick="alertmsg()">Add to cart</a>
         </div>
         {% endfor %}
     </div>
