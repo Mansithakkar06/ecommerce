@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render,redirect
 from django.views.generic import View,TemplateView,CreateView, FormView, DetailView
 from django.urls import reverse_lazy
+from django.db.models import Q
 from django.contrib import messages
 from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm
 from .models import *
@@ -30,14 +31,17 @@ class HomeView(EcomMixin, TemplateView):
         self.request.COOKIES.pop("messages", "")
         return context
     
-    
-class AllProductsView(EcomMixin, TemplateView):
-    template_name = "allproducts.html"
+#class CategoryView(View):
+ #   def get(self,request,slug):
+  #      product = Product.objects,filter(category=slug)
+   #     return render(request,"category.html",locals())
+class AllProductsView(TemplateView):
+     template_name = "allproducts.html"
 
-    def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
-        context['allcategories'] = Category.objects.all()
-        return context
+     def get_context_data(self, **kwargs):
+         context =  super().get_context_data(**kwargs)
+         context['allcategories'] = Category.objects.all()
+         return context
 
 class ProductDetailView(EcomMixin, TemplateView):
     template_name = "productdetail.html"
@@ -86,11 +90,10 @@ class AddToCartView(EcomMixin, TemplateView):
             cart_obj.total += product_obj.selling_price
             cart_obj.save()
             
-
         #check if product already exists in cart
         return context
 
-class ManageCartView(EcomMixin, View):
+class ManageCartView(View):
     def get(self, request, *args, **kwargs):
         print("this manage cart section")
         cp_id = self.kwargs["cp_id"]
@@ -232,6 +235,16 @@ class AboutView(EcomMixin, TemplateView):
 
 class ContactView(EcomMixin, TemplateView):
     template_name = "contactus.html"
+class SearchView(TemplateView):
+    template_name="search.html"
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        kw=self.request.GET.get("keyword")
+        results=Product.objects.filter(Q(title__icontains=kw)| Q(description__icontains=kw) | Q(return_policy__icontains=kw))
+        print(results)
+        context["results"]=results
+        return context
 
 
 class CustomerProfileView(TemplateView):
