@@ -75,9 +75,9 @@ class CartProduct(models.Model):
     
 
 ORDER_STATUS = (
-    ("Order Received" , "Order Received"),
     ("Order Processing" , "Order Processing"),
     ("On the way" , "on the way"),
+    ("Order Received" , "Order Received"),
     ("Order Completed" , "Order Completed"),
     ("Order Canceled" , "Order Canceled"),
 )

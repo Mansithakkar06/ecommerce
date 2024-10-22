@@ -109,9 +109,10 @@
 
                 </li>
 
-                {% if request.user.is_authenticated %}
-                <li class="nav-item mx-2"><a class="nav-link text-black" href="{% url " ecomm:customerlogout"
-                        %}">Logout</a></li>
+                {% if request.user.customer %}
+                <li class="nav-item mx-2">
+                    <a href="{% url 'ecomm:customerlogout'%}" class="nav-link text-black">Logout</a>
+                </li>
 
                 {% else %}
                 <li class="nav-item mx-2">
