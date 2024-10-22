@@ -4,7 +4,7 @@ from django.shortcuts import render,redirect
 from django.views.generic import View,TemplateView,CreateView, FormView, DetailView, ListView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm
+from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm, PasswordChangeForm
 from .models import *
 from django.db.models import Q
 
@@ -226,7 +226,12 @@ class CustomerLoginView(FormView):
             return next_url
         else:
             return self.success_url
-    
+
+
+class PasswordChangeView(FormView):
+    template_name = "changepassword.html"
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy("ecomm:home")
     
 class AboutView(EcomMixin, TemplateView):
     template_name = "about.html"
