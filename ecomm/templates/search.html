@@ -8,11 +8,11 @@
             <h3>Search results for <span class="text-info">"{{request.GET.keyword}}"</span> </h3>
             <hr>
             {% for result in results %}
-            <div class="row">
-                <div class="col-md-4">
-                    <img src="{{result.image.url}}" class="img-fluid" alt="">
+            <div class="row" style="border:1px solid lightgray;padding:5px;margin:5px;">
+                <div class="col-md-2">
+                    <a href="{% url 'ecomm:productdetail' result.slug %}"><img src="{{result.image.url}}" class="img-fluid" alt="" height="150px" width="150px"></a>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-10">
                     <h4><a href="{%url 'ecomm:productdetail' result.slug%}"></a>{{result.title}}</h4>
                     <p>{{result.description|truncatewords:50}}</p>
                     <p>Return Policy:{{result.return_policy}}</p>
