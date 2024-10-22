@@ -24,67 +24,75 @@
     <!-- Default theme -->
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css" />
     <script src=" {% static 'app/js/myscript.js' %} "> </script>
+    <style>
+        input[type=search] {
+            box-sizing: border-box;
+            border-radius: 15px;
+            font-size: 16px;
+            background-color: white;
+            background-image: url('static/app/images/search.png');
+            background-position: 10px 13px;
+            background-repeat: no-repeat;
+            padding: 12px 20px 12px 40px;
+        }
+    </style>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg bg-info navbar-custom ">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="{% static 'app/images/logo.png' %}" width="70" height="60" />
+                <img src="{% static 'app/images/logonew.png' %}" width="230" height="50" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active text-black" aria-current="page" href="/">Home</a>
-                    </li>
-                    {% comment "" %}
-                    <li class="nav-item dropdown mx-2">
-                        <a class="nav-link dropdown-toggle text-black" href="#" id="profileDropDown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
-                        <ul class="dropdown-menu" aria-labelledby="profileDropDown">
-                            <li><a class="dropdown-item" href="{% url 'ecomm:category' 'TL' %}">Textile</a></li>
-                            <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PT' %}">Painting</a></li>
-                            <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PC' %}">Pottery&Ceramics</a>
-                            </li>
-                            <li><a class="dropdown-item" href="{% url 'ecomm:category' 'SC' %}">Sculptures&Carving</a>
-                            </li>
-                            <li><a class="dropdown-item" href="{% url 'ecomm:category' 'HL' %}">Handlooms</a></li>
-                            <li><a class="dropdown-item" href="{% url 'ecomm:category' 'MC' %}">MetalCrafts</a></li>
-                            <li><a class="dropdown-item" href="{% url 'ecomm:category' 'WE' %}">Weaving</a></li>
+                <form action="{%url 'ecomm:search'%}" method="GET" class="d-flex nav-search" role="search">
+                    <input class="form-control me-2" type="search" name="keyword"
+                        placeholder="Search for the products you want......" aria-label="Search" size=45
+                        style="background-color: rgb(240,245,255);">
+                    <!--<button class="btn btn-outline-success" type="submit">Search</button>-->
+                </form>
 
-                        </ul>
-                    </li>
-                    {% endcomment %}
-                    <li class="nav-item">
-                        <a class="nav-link text-black" href="/all_products/">Categories</a>
-                    </li>
-                    <li class="nav-item">
+
+                {% comment %}
+                <li class="nav-item dropdown mx-2">
+                    <a class="nav-link dropdown-toggle text-black" href="#" id="profileDropDown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
+                    <ul class="dropdown-menu" aria-labelledby="profileDropDown">
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'TL' %}">Textile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PT' %}">Painting</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PC' %}">Pottery&Ceramics</a>
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'SC' %}">Sculptures&Carving</a>
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'HL' %}">Handlooms</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'MC' %}">MetalCrafts</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'WE' %}">Weaving</a></li>
+                    </ul>
+                </li>
+                {% endcomment %}
+
+                <!--<li class="nav-item">
                         <a class="nav-link text-black" href="/about/">About Us</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-black" href="/contact_us/">Contact Us</a>
-                    </li>
+                    </li>-->
 
-                </ul>
-                <form action="{%url 'ecomm:search'%}" method="GET" class="d-flex nav-search" role="search">
-                    <input class="form-control me-2" type="search" name="keyword" placeholder="Search"
-                        aria-label="Search" required>
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
+
             </div>
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-
+                <li class="nav-item">
+                    <a class="nav-link active text-black" aria-current="page" href="/">Home</a>
+                </li>&nbsp;&nbsp;&nbsp;&nbsp;
+                <li class="nav-item">
+                    <a class="nav-link text-black" href="/all_products/">Categories</a>
+                </li>&nbsp;&nbsp;&nbsp;&nbsp;
                 <li class="nav-item dropdown mx-2">
                     <a class="nav-link dropdown-toggle text-black" href="#" id="profileDropDown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">User</a>
@@ -94,7 +102,7 @@
                         <li><a class="dropdown-item" href="#">Change Password</a></li>
 
                     </ul>
-                </li>
+                </li>&nbsp;&nbsp;&nbsp;&nbsp;
 
 
                 <!-- cart icon in nav bar -->
@@ -102,7 +110,7 @@
                     <a href="{% url 'ecomm:mycart' %}" class="nav-link text-black"><i style="font-size:24px"
                             class="fa">&#xf07a;</i>
                     </a>
-                </li>
+                </li>&nbsp;&nbsp;
                 <li class="nav-item mx-2">
                     <a href="#" class="nav-link text-black"><i style="font-size:24px" class="fa">&#xf004;</i>
                     </a>
@@ -117,15 +125,16 @@
                 {% else %}
                 <li class="nav-item mx-2">
                     <a href="/login/" class="nav-link text-black">Login</a>
-                </li>
+                </li>&nbsp;&nbsp;&nbsp;&nbsp;
                 {% endif %}
 
 
                 <li class="nav-item mx-2">
                     <a href="/register/" class="nav-link text-black">Registration</a>
-                </li>
+                </li>&nbsp;&nbsp;&nbsp;&nbsp;
 
-                {% comment %} <li class="nav-item"> <button class="btn btn-outline-primary" type="submit" style="color:black; width:60px">Sell</button></li> {% endcomment %}
+                {% comment %} <li class="nav-item"> <button class="btn btn-outline-primary" type="submit"
+                        style="color:black; width:60px">Sell</button></li> {% endcomment %}
 
             </ul>
         </div>
@@ -160,7 +169,7 @@
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
         crossorigin="anonymous"></script>
     <script src=" {% static 'app/js/all.min.js' %} "> </script>
-    
+
     <script src=" {% static 'app/js/owl.carousel.min.js' %} "> </script>
     <!--alertifyjs-->
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
