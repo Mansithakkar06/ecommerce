@@ -6,7 +6,7 @@
     <h3>Product: {{product.title}}</h3>
     <div class="row">
         <div class="col-md-6">
-            <img src="{{product.image.url}}" alt="image" class="img-fluid">
+            <img src="{{product.image.url}}" alt="image" class="img-fluid" height="400px" width="400px">
         </div>
         <div class="col-md-6">
             <h4>{{product.title}} (viewed {{product.view_count}} times)</h4>
@@ -20,6 +20,10 @@
             <hr>
             <p>{{product.description}}</p>
             <a href="{% url 'ecomm:addtocart' product.id %}" class="btn btn-success" onclick="alertmsg()">Add to cart</a>
+            <!-- <form action="" method="POST">
+                <button class="btn btn-warning" type="submit">Buy Now</button>    
+            </form> -->
+            <a href="{% url 'ecomm:addtocart' product.id %}?next=/checkout/" class="btn btn-warning">Buy Now</a>
         </div>
     </div>
     <hr>

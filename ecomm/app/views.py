@@ -1,6 +1,8 @@
 from typing import Any
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.shortcuts import render,redirect
+from django.contrib.auth.hashers import make_password, check_password
 from django.views.generic import View,TemplateView,CreateView, FormView, DetailView, ListView
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -54,6 +56,17 @@ class ProductDetailView(EcomMixin, TemplateView):
     
 class AddToCartView(EcomMixin, TemplateView):
     template_name = "addtocart.html"
+    
+    
+    def get_success_url(self):
+        print("in get url")
+        if "next" in self.request.GET:
+            next_url = self.request.GET.get("next")
+            print("working")
+            return next_url
+        else:
+            return self.success_url
+    
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -89,6 +102,14 @@ class AddToCartView(EcomMixin, TemplateView):
             
 
         #check if product already exists in cart
+        
+        # if "next" in self.request.GET:
+        #     next_url = self.request.GET.get("next")
+        #     print("working")
+        #     return next_url
+        # else:
+        #     return context
+        
         return context
 
 class ManageCartView(EcomMixin, View):
@@ -228,10 +249,78 @@ class CustomerLoginView(FormView):
             return self.success_url
 
 
+
+
+
+class SellerPasswordChangeView(FormView):
+    template_name = "adminpages/sellerchangepassword.html"
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy("ecomm:adminhome")
+    
+    def form_valid(self, form):
+        print("*****************Change Password********************")
+        old = form.cleaned_data["oldpassword"]
+        new = form.cleaned_data["newpassword"]
+        confirm = form.cleaned_data["confirmpassword"]
+        print(old, new, confirm)
+        print("***Session user*****",self.request.user.password)
+        checkhash = check_password(old, self.request.user.password)
+        print(checkhash)
+        try:
+            if checkhash:
+                cstmr = Admin.objects.get(user=self.request.user)
+                print("Inside Try")
+            else:
+                cstmr = None
+        except:
+            cstmr = None
+            print("Inside Except")
+        if new == confirm and cstmr is not None:
+            loggeduser = User.objects.get(username=self.request.user.username, password=self.request.user.password)
+            loggeduser.password = make_password(new)
+            loggeduser.save()
+            return redirect("ecomm:adminhome")
+        else:
+            return render(self.request, self.template_name, {"form":self.form_class, "error": "Invalid credentials"})
+            
+        return super().form_valid(form)
+
+
+
 class PasswordChangeView(FormView):
     template_name = "changepassword.html"
     form_class = PasswordChangeForm
     success_url = reverse_lazy("ecomm:home")
+    
+    def form_valid(self, form):
+        print("*****************Change Password********************")
+        old = form.cleaned_data["oldpassword"]
+        new = form.cleaned_data["newpassword"]
+        confirm = form.cleaned_data["confirmpassword"]
+        print(old, new, confirm)
+        print("***Session user*****",self.request.user.password)
+        checkhash = check_password(old, self.request.user.password)
+        print(checkhash)
+        try:
+            if checkhash:
+                cstmr = Customer.objects.get(user=self.request.user)
+                print("Inside Try")
+            else:
+                cstmr = None
+        except:
+            cstmr = None
+            print("Inside Except")
+        if new == confirm and cstmr is not None:
+            loggeduser = User.objects.get(username=self.request.user.username, password=self.request.user.password)
+            loggeduser.password = make_password(new)
+            loggeduser.save()
+            return redirect ("ecomm:home")
+        else:
+            return render(self.request, self.template_name, {"form":self.form_class, "error": "Invalid credentials"})
+            
+        return super().form_valid(form)
+    
+    
     
 class AboutView(EcomMixin, TemplateView):
     template_name = "about.html"

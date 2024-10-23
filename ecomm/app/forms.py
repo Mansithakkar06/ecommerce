@@ -34,6 +34,6 @@ class CustomerLoginForm(forms.Form):
     
 
 class PasswordChangeForm(forms.Form):
-    oldpassword = forms.CharField(widget=forms.TextInput())
+    oldpassword = forms.CharField(widget=forms.PasswordInput())
     newpassword = forms.CharField(widget=forms.PasswordInput())
     confirmpassword = forms.CharField(widget=forms.PasswordInput())
