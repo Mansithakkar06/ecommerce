@@ -1,5 +1,5 @@
 from django import forms
-from .models import Order, Customer
+from .models import Order, Customer, Seller
 from django.contrib.auth.models import User
 
 
@@ -37,3 +37,21 @@ class PasswordChangeForm(forms.Form):
     oldpassword = forms.CharField(widget=forms.PasswordInput())
     newpassword = forms.CharField(widget=forms.PasswordInput())
     confirmpassword = forms.CharField(widget=forms.PasswordInput())
+    
+    
+class SellerRegistrationForm(forms.ModelForm):
+    username = forms.CharField(widget=forms.TextInput())
+    password = forms.CharField(widget=forms.PasswordInput())
+    email = forms.CharField(widget=forms.EmailInput())
+    
+    class Meta:
+        model = Seller
+        fields = ["username","password","email","full_name", "mobile","address"]
+    
+    
+    def clean_username(self):
+        uname = self.cleaned_data.get("username")
+        if User.objects.filter(username = uname).exists():
+            raise forms.ValidationError("Username already exists.")
+        
+        return uname

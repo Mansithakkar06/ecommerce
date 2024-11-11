@@ -3,6 +3,7 @@ from . views import *
 
 app_name = "ecomm"
 urlpatterns = [
+    # common pages path
     path("",HomeView.as_view(),name="home"),
     path("about/",AboutView.as_view(),name="about"),
     path("contact_us/",ContactView.as_view(),name="contact"),
@@ -14,17 +15,20 @@ urlpatterns = [
     path("manage-cart/<int:cp_id>/",ManageCartView.as_view(),name="managecart"),
     path("empty-cart/",EmptyCartView.as_view(),name="emptycart"),
     path("checkout/",CheckoutView.as_view(),name="checkout"),
+    path("search/",SearchView.as_view(), name="search"),
+    # customer pages path
     path("register/", CustomerRegistrationView.as_view(), name="customerregistration"), 
     path("logout/", CustomerLogoutView.as_view(), name="customerlogout"),
     path("login/", CustomerLoginView.as_view(), name="customerlogin"),
-    path("search/",SearchView.as_view(), name="search"),
-    path("profile/", CustomerProfileView.as_view(), name="customerprofile"),
-    path("profile/order-<int:pk>/", CustomerOrderDetailView.as_view(), name="customerorderdetail"),
-    path("admin-login/", AdminLoginView.as_view(), name="adminlogin"),
-    path("admin-home/", AdminHomeView.as_view(), name="adminhome"),
-    path("admin-order/<int:pk>/", AdminOrderDetailView.as_view(), name="adminorderdetail"),
-    path("admin-all-orders/", AdminOrderListView.as_view(), name="adminorderlist"),
-    path("admin-order-<int:pk>-change/", AdminOrderStatusChangeView.as_view(), name="adminorderstatuschange"),
+    path("my-orders/", MyOrdersView.as_view(), name="myorders"),
+    path("my-order/order-<int:pk>/", CustomerOrderDetailView.as_view(), name="customerorderdetail"),
+    # seller pages path
+    path("admin-login/", SellerLoginView.as_view(), name="adminlogin"),
+    path("admin-home/", SellerHomeView.as_view(), name="adminhome"),
+    path("admin-order/<int:pk>/", SellerOrderDetailView.as_view(), name="adminorderdetail"),
+    path("admin-all-orders/", SellerOrderListView.as_view(), name="adminorderlist"),
+    path("admin-order-<int:pk>-change/", SellerOrderStatusChangeView.as_view(), name="adminorderstatuschange"),
     path("change-password/", PasswordChangeView.as_view(), name="changepassword"),
     path("seller-change-password/", SellerPasswordChangeView.as_view(), name="changepassword"),
+    path("seller-register/", SellerRegistrationView.as_view(), name="sellerregistration"), 
 ]

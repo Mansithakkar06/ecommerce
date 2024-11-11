@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'adminpages/adminbase.html' %}
 
 {% block title %} Registration {% endblock %}
 {% load crispy_forms_tags %}
@@ -6,11 +6,11 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 mx-auto">
-                <h3> Registration Form</h3> <hr>
+                <h3> Seller Registration Form</h3> <hr>
                 <form action="" method="POST">
                     {% csrf_token %} 
                     {{form|crispy }} <br>
-                    <button class="btn btn-primary">Register here</button>
+                    <button class="btn btn-primary">Register as Seller</button>
                 </form>
             </div>
         </div>
