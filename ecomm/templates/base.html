@@ -91,8 +91,8 @@
                     <a class="nav-link dropdown-toggle text-black" href="#" id="profileDropDown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">User</a>
                     <ul class="dropdown-menu" aria-labelledby="profileDropDown">
-                        <li><a class="dropdown-item" href="/my-profile/">Profile</a></li>
-                        <li><a class="dropdown-item" href="/my-orders/">Orders</a></li>
+                        <li><a class="dropdown-item" href="{% url "ecomm:myprofile" %}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url "ecomm:myorders" %}">Orders</a></li>
                         {% if request.user.customer %}
                         <li><a class="dropdown-item" href="/change-password/">Change Password</a></li>
                         {% endif %}
