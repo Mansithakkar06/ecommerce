@@ -9,6 +9,9 @@ from django.contrib import messages
 from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm, PasswordChangeForm, SellerRegistrationForm #UserProfileForm
 from .models import *
 from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpResponse
+from django.views.generic.edit import DeleteView
 
 
 # common pages
@@ -379,7 +382,7 @@ class MyProfileView(FormView):
     def post(self,request):
         if request.user.is_authenticated:
             username = request.POST.get('uname')
-            print("****************************",username)
+            # print("****************************",username)
             fullname = request.POST.get('fullname')
             mobile = request.POST.get('mobile')
             email = request.POST.get('email')
@@ -596,7 +599,7 @@ class AddProductView(SellerRequiredMixin, TemplateView):
         if category is not None:
             newProduct = Product(category=category,title=title,slug=title,marked_price=mrp,selling_price=sp,description=description,warranty=warranty,return_policy=returnPolicy,image=pImage)
             newProduct.save()
-            messages.success(request, "Product Added Sccessfully")
+            messages.success(request, "Product Added Successfully")
             return redirect('/add-product')
         else:
             messages.error(request, "Error In Adding Product")
@@ -604,6 +607,68 @@ class AddProductView(SellerRequiredMixin, TemplateView):
         
 
 
-class AllProductView(SellerRequiredMixin, TemplateView):
+# class AllProductView(SellerRequiredMixin, TemplateView):
+#     def get(self, request):
+#         return render(request, 'adminpages/allproduct.html')
+
+class AllProductView(SellerRequiredMixin, ListView):
+    template_name = "adminpages/allproduct.html"
+    queryset = Product.objects.all().order_by("-id")
+    context_object_name = "allproducts"
+
+
+class UpdateProductView(FormView):
+    def get(self,request):
+        if request.user.is_authenticated:
+            try:
+                current_product = Product.objects.get(product__id=request.product.id)    
+            except:
+                return redirect("/adminlogin/?next=/update-product/")
+            if current_product is not None:
+                #messages = None
+                return render(request, "updateproduct.html", locals())
+            
+            # form = UserProfileForm(request.POST or None, instance=current_user)
+            
+            # if form.is_valid():
+            #     form.save()
+            #     messages.success(request, "Your profile has been updated")
+            #     return redirect('home')
+            #return render(request, "myprofile.html")
+        else:
+            return redirect("/adminlogin/?next=/update-product/")
+    
     def get(self, request):
-        return render(request, 'adminpages/allproduct.html')
+        categories = Category.objects.all()
+        #print(categories)
+        return render(request, 'adminpages/updateproduct.html',locals())
+        
+    def post(self,request):
+        categoryId = request.POST.get('category')
+        title = request.POST.get('title')
+        mrp = request.POST.get('mrp')
+        sp = request.POST.get('sp')
+        description = request.POST.get('description')
+        warranty = request.POST.get('warranty')
+        returnPolicy = request.POST.get('returnPolicy')
+        pImage = request.FILES['ProductImage']
+        print(categoryId,title,mrp,sp,description,warranty,returnPolicy,pImage)
+        try:
+            category = Category.objects.get(id=categoryId)
+        except:
+            category = None
+        if category is not None:
+            newProduct = Product(category=category,title=title,slug=title,marked_price=mrp,selling_price=sp,description=description,warranty=warranty,return_policy=returnPolicy,image=pImage)
+            newProduct.save()
+            messages.success(request, "Product Updated Successfully")
+            return redirect('/update-product')
+        else:
+            messages.error(request, "Error In Updating Product")
+            return redirect('/update-product')
+
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = 'product_confirm_delete.html'  # Your confirmation template
+    success_url = reverse_lazy('product_list')  # Redirect after successful deletion
