@@ -1,0 +1,62 @@
+{% extends 'adminpages/adminbase.html' %}
+
+{% block title %} Add Prodcts {% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            {% if messages %}
+                <p style="color:yellow;font-size:20px;">
+                    {% for msg in messages %}
+                    {{msg}}
+                    {% endfor %}
+                </p>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <h3>Add Products</h3> <hr>
+            <form action="/add-product/" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %} 
+                    <label for="category">Category</label>
+                    <select name="category" id="category">
+                        <option value="None" disabled selected>Select Category</option>
+                        {% for category in categories %}
+                        <option value="{{category.id}}">{{category.title}}</option>
+                        {% endfor %}
+                    </select>
+                    <p>
+                        <label for="title">Title</label>
+                        <input type="text" name="title" id="title">
+                    </p>
+                    <p>
+                        <label for="markPrice">Marked Price</label>
+                        <input type="number" name="mrp" id="markPrice">
+                    </p>
+                    <p>
+                        <label for="sellPrice">Selling Price</label>
+                        <input type="number" name="sp" id="sellPrice">
+                    </p>
+                    <p>
+                        <label for="desc">Description</label>
+                        <textarea name="description" rows="5" cols="10" id="desc"></textarea>
+                    </p>
+                    <p>
+                        <label for="warranty">Warranty</label>
+                        <input type="text" name="warranty" id="warranty">
+                    </p>
+                    <p>
+                        <label for="retrnPolicy">Return Policy</label>
+                        <input type="text" name="returnPolicy" id="retrnPolicy">
+                    </p>
+                    <p>
+                        <label for="ProductImage">Image</label>
+                        <input type="file" name="ProductImage" id="ProductImage">
+                    </p>
+                    <input type="submit" value="Add Product" class="btn btn-primary">
+                </form> 
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

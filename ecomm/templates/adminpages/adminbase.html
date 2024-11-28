@@ -58,6 +58,15 @@
                     </ul>
                 </li>&nbsp;&nbsp;&nbsp;&nbsp;
 
+                <li class="nav-item dropdown mx-2">
+                    <a class="nav-link dropdown-toggle text-black" href="#" id="profileDropDown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">Products</a>
+                    <ul class="dropdown-menu" aria-labelledby="profileDropDown">
+                        <li><a class="dropdown-item" href="/add-product/">Add Product</a></li>
+                        <li><a class="dropdown-item" href="/all-products/">All Products</a></li>
+
+                    </ul>
+                </li>&nbsp;&nbsp;&nbsp;&nbsp;
 
                 {% if request.user.customer %}
                 <li class="nav-item mx-2">

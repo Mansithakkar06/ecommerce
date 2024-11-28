@@ -572,3 +572,38 @@ class SellerOrderStatusChangeView(SellerRequiredMixin, View):
         order_obj.order_status = new_status
         order_obj.save()
         return redirect(reverse_lazy("ecomm:adminorderlist"))
+
+
+class AddProductView(SellerRequiredMixin, TemplateView):
+    def get(self, request):
+        categories = Category.objects.all()
+        #print(categories)
+        return render(request, 'adminpages/addproduct.html',locals())
+    def post(self,request):
+        categoryId = request.POST.get('category')
+        title = request.POST.get('title')
+        mrp = request.POST.get('mrp')
+        sp = request.POST.get('sp')
+        description = request.POST.get('description')
+        warranty = request.POST.get('warranty')
+        returnPolicy = request.POST.get('returnPolicy')
+        pImage = request.FILES['ProductImage']
+        print(categoryId,title,mrp,sp,description,warranty,returnPolicy,pImage)
+        try:
+            category = Category.objects.get(id=categoryId)
+        except:
+            category = None
+        if category is not None:
+            newProduct = Product(category=category,title=title,slug=title,marked_price=mrp,selling_price=sp,description=description,warranty=warranty,return_policy=returnPolicy,image=pImage)
+            newProduct.save()
+            messages.success(request, "Product Added Sccessfully")
+            return redirect('/add-product')
+        else:
+            messages.error(request, "Error In Adding Product")
+            return redirect('/add-product')
+        
+
+
+class AllProductView(SellerRequiredMixin, TemplateView):
+    def get(self, request):
+        return render(request, 'adminpages/allproduct.html')

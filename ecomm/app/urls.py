@@ -31,5 +31,7 @@ urlpatterns = [
     path("admin-order-<int:pk>-change/", SellerOrderStatusChangeView.as_view(), name="adminorderstatuschange"),
     path("change-password/", PasswordChangeView.as_view(), name="changepassword"),
     path("seller-change-password/", SellerPasswordChangeView.as_view(), name="changepassword"),
-    path("seller-register/", SellerRegistrationView.as_view(), name="sellerregistration"),  
+    path("seller-register/", SellerRegistrationView.as_view(), name="sellerregistration"), 
+    path("add-product/", AddProductView.as_view(), name="addproduct"), 
+    path("all-products/", AllProductView.as_view(), name="allproducts"), 
 ]
