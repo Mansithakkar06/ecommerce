@@ -4,11 +4,13 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class Admin(models.Model):
+class Seller(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=50)
-    image = models.ImageField(upload_to="admins")
     mobile = models.CharField(max_length=20)
+    joined_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    address = models.CharField(max_length=200 ,null=True, blank=True)
+    
     
     def __str__(self):
         return self.user.username
@@ -18,6 +20,7 @@ class Customer(models.Model):
     full_name = models.CharField(max_length=200)
     address = models.CharField(max_length=200 ,null=True, blank=True)
     joined_on = models.DateTimeField(auto_now_add=True)
+    mobile = models.CharField(max_length=20, blank=True)
 
     def __str__(self):
         return self.full_name
@@ -97,7 +100,5 @@ class Order(models.Model):
 
     def __str__(self):
         return "Order: "+ str(self.id)
-    
-
     
 

@@ -6,12 +6,12 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.views.generic import View,TemplateView,CreateView, FormView, DetailView, ListView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm, PasswordChangeForm
+from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm, PasswordChangeForm, SellerRegistrationForm #UserProfileForm
 from .models import *
 from django.db.models import Q
 
 
-
+# common pages
 class EcomMixin(object):
     def dispatch(self, request, *args, **kwargs):
         cart_id = request.session.get("cart_id")
@@ -217,6 +217,28 @@ class CheckoutView(EcomMixin, CreateView):
         return super().form_valid(form)
  
  
+class SearchView(TemplateView):
+    template_name="search.html"
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        kw=self.request.GET.get("keyword")
+        results=Product.objects.filter(Q(title__icontains=kw)| Q(description__icontains=kw) | Q(return_policy__icontains=kw))
+        print(results)
+        context["results"]=results
+        return context
+
+
+class AboutView(EcomMixin, TemplateView):
+    template_name = "about.html"
+
+class ContactView(EcomMixin, TemplateView):
+    template_name = "contactus.html"
+
+
+
+# customer pages
+
 class CustomerRegistrationView(CreateView):
     template_name = "customerregistration.html"
     form_class = CustomerRegistrationForm
@@ -230,12 +252,6 @@ class CustomerRegistrationView(CreateView):
         form.instance.user = user
         login(self.request, user)
         return super().form_valid(form)
-
-
-class CustomerLogoutView(View):
-    def get(self, request):
-        logout(request)
-        return redirect("ecomm:home")
 
 
 class CustomerLoginView(FormView):
@@ -262,42 +278,10 @@ class CustomerLoginView(FormView):
             return self.success_url
 
 
-
-
-
-class SellerPasswordChangeView(FormView):
-    template_name = "adminpages/sellerchangepassword.html"
-    form_class = PasswordChangeForm
-    success_url = reverse_lazy("ecomm:adminhome")
-    
-    def form_valid(self, form):
-        print("*****************Change Password********************")
-        old = form.cleaned_data["oldpassword"]
-        new = form.cleaned_data["newpassword"]
-        confirm = form.cleaned_data["confirmpassword"]
-        print(old, new, confirm)
-        print("***Session user*****",self.request.user.password)
-        checkhash = check_password(old, self.request.user.password)
-        print(checkhash)
-        try:
-            if checkhash:
-                cstmr = Admin.objects.get(user=self.request.user)
-                print("Inside Try")
-            else:
-                cstmr = None
-        except:
-            cstmr = None
-            print("Inside Except")
-        if new == confirm and cstmr is not None:
-            loggeduser = User.objects.get(username=self.request.user.username, password=self.request.user.password)
-            loggeduser.password = make_password(new)
-            loggeduser.save()
-            return redirect("ecomm:adminhome")
-        else:
-            return render(self.request, self.template_name, {"form":self.form_class, "error": "Invalid credentials"})
-            
-        return super().form_valid(form)
-
+class CustomerLogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect("ecomm:home")
 
 
 class PasswordChangeView(FormView):
@@ -306,7 +290,6 @@ class PasswordChangeView(FormView):
     success_url = reverse_lazy("ecomm:home")
     
     def form_valid(self, form):
-        print("*****************Change Password********************")
         old = form.cleaned_data["oldpassword"]
         new = form.cleaned_data["newpassword"]
         confirm = form.cleaned_data["confirmpassword"]
@@ -332,24 +315,16 @@ class PasswordChangeView(FormView):
             return render(self.request, self.template_name, {"form":self.form_class, "error": "Invalid credentials"})
             
         return super().form_valid(form)
-    
-    
-    
-class AboutView(EcomMixin, TemplateView):
-    template_name = "about.html"
-
-class ContactView(EcomMixin, TemplateView):
-    template_name = "contactus.html"
 
 
-class CustomerProfileView(TemplateView):
-    template_name = "customerprofile.html"
+class MyOrdersView(TemplateView):
+    template_name = "myorders.html"
     
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and Customer.objects.filter(user=request.user).exists():
             pass
         else:
-            return redirect("/login/?next=/profile/")
+            return redirect("/login/?next=/my-orders/")
         return super().dispatch(request,*args, **kwargs)
     
     def get_context_data(self, **kwargs):
@@ -370,14 +345,137 @@ class CustomerOrderDetailView(DetailView):
             order_id = self.kwargs["pk"]
             order = Order.objects.get(id=order_id)
             if request.user.customer != order.cart.customer:
-                return redirect("ecomm:customerprofile")
+                return redirect("ecomm:myorders")
             
         else:
-            return redirect("/login/?next=/profile/")
+            return redirect("/login/?next=/my-orders/")
         return super().dispatch(request, *args, **kwargs)
 
-#admin pages
-class AdminLoginView(FormView):
+
+class MyProfileView(FormView):
+    def get(self,request):
+        if request.user.is_authenticated:
+            try:
+                try:
+                    current_user = Seller.objects.get(user__id=request.user.id)
+                except:
+                    current_user = Customer.objects.get(user__id=request.user.id)
+            except:
+                return redirect("/login/?next=/my-profile/")
+            if current_user is not None:
+                #messages = None
+                return render(request, "myprofile.html", locals())
+            
+            # form = UserProfileForm(request.POST or None, instance=current_user)
+            
+            # if form.is_valid():
+            #     form.save()
+            #     messages.success(request, "Your profile has been updated")
+            #     return redirect('home')
+            #return render(request, "myprofile.html")
+        else:
+            return redirect("/login/?next=/my-profile/")
+        
+    def post(self,request):
+        if request.user.is_authenticated:
+            username = request.POST.get('uname')
+            print("****************************",username)
+            fullname = request.POST.get('fullname')
+            mobile = request.POST.get('mobile')
+            email = request.POST.get('email')
+            address = request.POST.get('address')
+            try:
+                try:
+                    current_user = Seller.objects.get(user__id=request.user.id)
+                except:
+                    current_user = Customer.objects.get(user__id=request.user.id)
+            except:
+                return redirect("/login/?next=/my-profile/")
+            if current_user is not None:
+                #current_user.user.username=username
+                absUser = User.objects.get(id=current_user.user.id)
+                absUser.email = email
+                absUser.username=username
+                absUser.save()
+                current_user.full_name=fullname
+                current_user.mobile=mobile
+                #current_user.user.email=email
+                current_user.address=address
+                current_user.save()
+                messages.success(request, "Your profile has been updated")
+                return redirect('/my-profile')
+            
+            # form = UserProfileForm(request.POST or None, instance=current_user)
+            
+            # if form.is_valid():
+            #     form.save()
+            #     messages.success(request, "Your profile has been updated")
+            #     return redirect('home')
+            #return render(request, "myprofile.html")
+        else:
+            return redirect("/login/?next=/my-profile/")
+        
+        
+    
+    # def user_info(request):
+    #     if request.user.is_authenticated:
+    #         current_user = Profile.objects.get(user__id=request.user.id)
+    #         form = UserProfileForm(request.POST or None, instance=current_user)
+            
+    #         if form.is_valid():
+    #             form.save()
+    #             messages.success(request, "Your profile has been updated")
+    #             return redirect('home')
+    #         return render(request, "myprofile.html", {'form':form})
+    #     else:
+    #         return redirect("/login/?next=/my-profile/")
+        
+        
+
+    # template_name = "myprofile.html"
+    # form_class = UserProfileForm
+    # success_url = reverse_lazy("ecomm:home")
+    
+    # def form_valid(self, form):
+    #     uname = form.cleaned_data.get("username")
+    #     model = Customer
+        
+    #     def dispatch(self, request, *args, **kwargs):
+    #         if request.user.is_authenticated and Customer.objects.filter(user=request.user).exists():
+    #             current_user = Profile.objects.get(user__id=request.user.id)
+    #             form = UserProfileForm(request.POST or None, instance=current_user)
+    #             if form.is_valid():
+    #                 form.save()
+    #                 messages.success(request, "Your profile has been updated")
+    #                 return redirect('home')
+    #         else:
+    #             return redirect("/login/?next=/my-orders/")
+    #         return super().dispatch(request, *args, **kwargs)         
+
+
+#seller pages
+class SellerRegistrationView(CreateView):
+    template_name = "adminpages/sellerregistration.html"
+    form_class = SellerRegistrationForm
+    success_url = reverse_lazy("ecomm:adminhome")
+    
+    def form_valid(self, form):
+        username = form.cleaned_data.get("username")
+        password = form.cleaned_data.get("password")
+        email = form.cleaned_data.get("email")
+        user = User.objects.create_user(username,email,password)
+        form.instance.user = user
+        login(self.request, user)
+        return super().form_valid(form)
+        # username = form.cleaned_data.get("username")
+        # password = form.cleaned_data.get("password")
+        # email = form.cleaned_data.get("email")
+        # user = User.objects.create_user(username,email,password)
+        # form.user = user
+        # login(self.request, user)
+        # return super().form_valid(form)
+
+class SellerLoginView(FormView):
     template_name = "adminpages/adminlogin.html"
     form_class = CustomerLoginForm
     success_url = reverse_lazy("ecomm:adminhome")
@@ -386,22 +484,62 @@ class AdminLoginView(FormView):
         uname = form.cleaned_data.get("username")
         pword = form.cleaned_data["password"]
         usr = authenticate(username=uname, password=pword)
-        if usr is not None and Admin.objects.filter(user=usr).exists():
+        if usr is not None and Seller.objects.filter(user=usr).exists():
             login(self.request, usr)
         else:
             return render(self.request, self.template_name, {"form":self.form_class, "error": "Invalid credentials"})
         return super().form_valid(form)
 
 
-class AdminRequiredMixin(object):
+class SellerLogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect("ecomm:home")
+    
+
+class SellerPasswordChangeView(FormView):
+    template_name = "adminpages/sellerchangepassword.html"
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy("ecomm:adminhome")
+    
+    def form_valid(self, form):
+        print("*****************Change Password********************")
+        old = form.cleaned_data["oldpassword"]
+        new = form.cleaned_data["newpassword"]
+        confirm = form.cleaned_data["confirmpassword"]
+        print(old, new, confirm)
+        print("***Session user*****",self.request.user.password)
+        checkhash = check_password(old, self.request.user.password)
+        print(checkhash)
+        try:
+            if checkhash:
+                cstmr = Seller.objects.get(user=self.request.user)
+                print("Inside Try")
+            else:
+                cstmr = None
+        except:
+            cstmr = None
+            print("Inside Except")
+        if new == confirm and cstmr is not None:
+            loggeduser = User.objects.get(username=self.request.user.username, password=self.request.user.password)
+            loggeduser.password = make_password(new)
+            loggeduser.save()
+            return redirect("ecomm:adminhome")
+        else:
+            return render(self.request, self.template_name, {"form":self.form_class, "error": "Invalid credentials"})
+            
+        return super().form_valid(form)
+
+
+class SellerRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and Admin.objects.filter(user=request.user).exists():
+        if request.user.is_authenticated and Seller.objects.filter(user=request.user).exists():
             pass
         else:
             return redirect("/admin-login/")
         return super().dispatch(request,*args, **kwargs)
 
-class AdminHomeView(AdminRequiredMixin, TemplateView):
+class SellerHomeView(SellerRequiredMixin, TemplateView):
     template_name = "adminpages/adminhome.html"
     
     def get_context_data(self, **kwargs):
@@ -410,7 +548,7 @@ class AdminHomeView(AdminRequiredMixin, TemplateView):
             return context
 
 
-class  AdminOrderDetailView(AdminRequiredMixin, DetailView):
+class  SellerOrderDetailView(SellerRequiredMixin, DetailView):
     template_name = "adminpages/adminorderdetail.html"
     model = Order
     context_object_name = "ord_obj"
@@ -420,28 +558,17 @@ class  AdminOrderDetailView(AdminRequiredMixin, DetailView):
         context["allstatus"] = ORDER_STATUS
         return context
 
-class AdminOrderListView(AdminRequiredMixin, ListView):
+class SellerOrderListView(SellerRequiredMixin, ListView):
     template_name = "adminpages/adminorderlist.html"
     queryset = Order.objects.all().order_by("-id")
     context_object_name = "allorders"
 
 
-class AdminOrderStatusChangeView(AdminRequiredMixin, View):
+class SellerOrderStatusChangeView(SellerRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         order_id = self.kwargs["pk"]
         order_obj = Order.objects.get(id=order_id)
         new_status = request.POST.get("status")
         order_obj.order_status = new_status
         order_obj.save()
-        return redirect(reverse_lazy("ecomm:adminorderdetail", kwargs={"pk": order_id}))
-
-class SearchView(TemplateView):
-    template_name="search.html"
-
-    def get_context_data(self, **kwargs):
-        context=super().get_context_data(**kwargs)
-        kw=self.request.GET.get("keyword")
-        results=Product.objects.filter(Q(title__icontains=kw)| Q(description__icontains=kw) | Q(return_policy__icontains=kw))
-        print(results)
-        context["results"]=results
-        return context
+        return redirect(reverse_lazy("ecomm:adminorderlist"))
