@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.views.generic import View,TemplateView,CreateView, FormView, DetailView, ListView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm, PasswordChangeForm, SellerRegistrationForm
+from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm, PasswordChangeForm, SellerRegistrationForm #UserProfileForm
 from .models import *
 from django.db.models import Q
 
@@ -277,7 +277,6 @@ class PasswordChangeView(FormView):
     success_url = reverse_lazy("ecomm:home")
     
     def form_valid(self, form):
-        print("*****************Change Password********************")
         old = form.cleaned_data["oldpassword"]
         new = form.cleaned_data["newpassword"]
         confirm = form.cleaned_data["confirmpassword"]
@@ -339,6 +338,106 @@ class CustomerOrderDetailView(DetailView):
             return redirect("/login/?next=/my-orders/")
         return super().dispatch(request, *args, **kwargs)
 
+
+class MyProfileView(FormView):
+    def get(self,request):
+        if request.user.is_authenticated:
+            try:
+                try:
+                    current_user = Seller.objects.get(user__id=request.user.id)
+                except:
+                    current_user = Customer.objects.get(user__id=request.user.id)
+            except:
+                return redirect("/login/?next=/my-profile/")
+            if current_user is not None:
+                #messages = None
+                return render(request, "myprofile.html", locals())
+            
+            # form = UserProfileForm(request.POST or None, instance=current_user)
+            
+            # if form.is_valid():
+            #     form.save()
+            #     messages.success(request, "Your profile has been updated")
+            #     return redirect('home')
+            #return render(request, "myprofile.html")
+        else:
+            return redirect("/login/?next=/my-profile/")
+        
+    def post(self,request):
+        if request.user.is_authenticated:
+            username = request.POST.get('uname')
+            print("****************************",username)
+            fullname = request.POST.get('fullname')
+            mobile = request.POST.get('mobile')
+            email = request.POST.get('email')
+            address = request.POST.get('address')
+            try:
+                try:
+                    current_user = Seller.objects.get(user__id=request.user.id)
+                except:
+                    current_user = Customer.objects.get(user__id=request.user.id)
+            except:
+                return redirect("/login/?next=/my-profile/")
+            if current_user is not None:
+                #current_user.user.username=username
+                absUser = User.objects.get(id=current_user.user.id)
+                absUser.email = email
+                absUser.username=username
+                absUser.save()
+                current_user.full_name=fullname
+                current_user.mobile=mobile
+                #current_user.user.email=email
+                current_user.address=address
+                current_user.save()
+                messages.success(request, "Your profile has been updated")
+                return redirect('/my-profile')
+            
+            # form = UserProfileForm(request.POST or None, instance=current_user)
+            
+            # if form.is_valid():
+            #     form.save()
+            #     messages.success(request, "Your profile has been updated")
+            #     return redirect('home')
+            #return render(request, "myprofile.html")
+        else:
+            return redirect("/login/?next=/my-profile/")
+        
+        
+    
+    # def user_info(request):
+    #     if request.user.is_authenticated:
+    #         current_user = Profile.objects.get(user__id=request.user.id)
+    #         form = UserProfileForm(request.POST or None, instance=current_user)
+            
+    #         if form.is_valid():
+    #             form.save()
+    #             messages.success(request, "Your profile has been updated")
+    #             return redirect('home')
+    #         return render(request, "myprofile.html", {'form':form})
+    #     else:
+    #         return redirect("/login/?next=/my-profile/")
+        
+        
+
+    # template_name = "myprofile.html"
+    # form_class = UserProfileForm
+    # success_url = reverse_lazy("ecomm:home")
+    
+    # def form_valid(self, form):
+    #     uname = form.cleaned_data.get("username")
+    #     model = Customer
+        
+    #     def dispatch(self, request, *args, **kwargs):
+    #         if request.user.is_authenticated and Customer.objects.filter(user=request.user).exists():
+    #             current_user = Profile.objects.get(user__id=request.user.id)
+    #             form = UserProfileForm(request.POST or None, instance=current_user)
+    #             if form.is_valid():
+    #                 form.save()
+    #                 messages.success(request, "Your profile has been updated")
+    #                 return redirect('home')
+    #         else:
+    #             return redirect("/login/?next=/my-orders/")
+    #         return super().dispatch(request, *args, **kwargs)         
 
 
 #seller pages

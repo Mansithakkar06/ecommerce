@@ -22,6 +22,7 @@ urlpatterns = [
     path("login/", CustomerLoginView.as_view(), name="customerlogin"),
     path("my-orders/", MyOrdersView.as_view(), name="myorders"),
     path("my-order/order-<int:pk>/", CustomerOrderDetailView.as_view(), name="customerorderdetail"),
+    path("my-profile/", MyProfileView.as_view(), name="myprofile"),
     # seller pages path
     path("admin-login/", SellerLoginView.as_view(), name="adminlogin"),
     path("admin-home/", SellerHomeView.as_view(), name="adminhome"),

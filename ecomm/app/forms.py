@@ -55,3 +55,16 @@ class SellerRegistrationForm(forms.ModelForm):
             raise forms.ValidationError("Username already exists.")
         
         return uname
+
+
+# class UserProfileForm(forms.ModelForm):
+#     phone = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Phone'}), required=False)
+#     address = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Address'}), required=False)
+#     city = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control','placeholder':'City'}), required=False)
+#     state = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control','placeholder':'State'}), required=False)
+#     zipcode = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Zipcode'}), required=False)
+#     country = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Country'}), required=False)
+    
+#     class Meta:
+#         model = Profile
+#         fields = ('phone', 'address', 'city', 'state', 'zipcode', 'country',)

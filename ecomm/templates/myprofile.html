@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %} My Profile {% endblock %}
+{% block content %}
+
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Update Info</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Update User Info...</p>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    
+    <div class="row" style="background-color:grey;">
+        {% if messages %}
+            <p style="color:Green">
+                {% for msg in messages %}
+                {{msg}}
+                {% endfor %}
+            </p>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <br>
+            <form method="POST" action="{% url 'ecomm:myprofile' %}">
+                {% csrf_token %}
+                <p>
+                <label for="uname">User Name</label>
+                <input type="text" name="uname" id="uname" value="{{current_user.user.username}}">
+            </p>
+            <p>
+                <label for="name">Full Name</label>
+                <input type="text" name="fullname" id="name" value="{{current_user.full_name}}"/>
+            </p>
+            <p>
+                <label for="mobile">Mobile</label>
+                <input type="tel" name="mobile" id="mobile" value="{{current_user.mobile}}">
+            </p>
+            <p>
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" value="{{current_user.user.email}}">
+            </p>
+            <p>
+                <label for="address">Address</label>
+                <input type="text" name="address" id="address" value="{{current_user.address}}">
+            </p>
+                <input type="submit" value="Update Profile" class="btn btn-secondary">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
