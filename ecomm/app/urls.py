@@ -32,4 +32,5 @@ urlpatterns = [
     path("change-password/", PasswordChangeView.as_view(), name="changepassword"),
     path("seller-change-password/", SellerPasswordChangeView.as_view(), name="changepassword"),
     path("seller-register/", SellerRegistrationView.as_view(), name="sellerregistration"), 
+    path("add-product/", SellerRegistrationView.as_view(), name="addproduct"), 
 ]
