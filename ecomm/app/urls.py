@@ -8,7 +8,7 @@ urlpatterns = [
     path("about/",AboutView.as_view(),name="about"),
     path("contact_us/",ContactView.as_view(),name="contact"),
     path("all_products/",AllProductsView.as_view(),name="allproducts"),
-    #path("category/<slug:slug>/",CategoryView.as_view(),name="category"),
+    path("category/<str:cat>",CategoryView.as_view(),name="category"),
     path("product/<slug:slug>/",ProductDetailView.as_view(),name="productdetail"),
     path("add_to_cart-<int:pro_id>/",AddToCartView.as_view(),name="addtocart"),
     path("my-cart/",MyCartView.as_view(),name="mycart"),
@@ -31,6 +31,5 @@ urlpatterns = [
     path("admin-order-<int:pk>-change/", SellerOrderStatusChangeView.as_view(), name="adminorderstatuschange"),
     path("change-password/", PasswordChangeView.as_view(), name="changepassword"),
     path("seller-change-password/", SellerPasswordChangeView.as_view(), name="changepassword"),
-    path("seller-register/", SellerRegistrationView.as_view(), name="sellerregistration"), 
-    path("add-product/", SellerRegistrationView.as_view(), name="addproduct"), 
+    path("seller-register/", SellerRegistrationView.as_view(), name="sellerregistration"),  
 ]

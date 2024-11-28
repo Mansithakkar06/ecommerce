@@ -24,6 +24,7 @@
                 <button class="btn btn-warning" type="submit">Buy Now</button>    
             </form> -->
             <a href="{% url 'ecomm:addtocart' product.id %}?next=/checkout/" class="btn btn-warning">Buy Now</a>
+            <a pid={{product.id}} class="minus-wishlist btn btn-danger shadow px-5 py-2 ms-4"><i class="fa fa-heart" style="color:red"></i></a>
         </div>
     </div>
     <hr>
