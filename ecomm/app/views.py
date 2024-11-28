@@ -32,6 +32,19 @@ class HomeView(EcomMixin, TemplateView):
         context['product_list']=Product.objects.all().order_by("-id")
         self.request.COOKIES.pop("messages", "")
         return context
+
+class CategoryView(EcomMixin,TemplateView):
+    template_name="category.html"
+
+    def get_context_data(self,**kwargs):
+        cat = kwargs['cat']
+        cat = cat.replace('-',' ')
+        category = Category.objects.get(title=cat)
+        products = Product.objects.filter(category=category)
+        context = {}
+        context['products'] = products
+        context['cat'] = category
+        return context
     
     
 class AllProductsView(EcomMixin, TemplateView):

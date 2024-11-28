@@ -31,7 +31,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-info navbar-custom ">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/">
                 <img src="{% static 'app/images/logonew.png' %}" width="230" height="50" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -42,29 +42,14 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <form action="{%url 'ecomm:search'%}" method="GET" class="d-flex nav-search" role="search">
                     <input id="search-icon" class="form-control me-2" type="search" name="keyword"
-                        placeholder="Search for the products you want......" aria-label="Search" size=45
+                        placeholder="Search for the products you want......" aria-label="Search" size=40
                         style="background-color: rgb(240,245,255);">
                     <!--<button class="btn btn-outline-success" type="submit">Search</button>-->
                 </form>
 
 
-                {% comment %}
-                <li class="nav-item dropdown mx-2">
-                    <a class="nav-link dropdown-toggle text-black" href="#" id="profileDropDown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
-                    <ul class="dropdown-menu" aria-labelledby="profileDropDown">
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'TL' %}">Textile</a></li>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PT' %}">Painting</a></li>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PC' %}">Pottery&Ceramics</a>
-                        </li>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'SC' %}">Sculptures&Carving</a>
-                        </li>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'HL' %}">Handlooms</a></li>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'MC' %}">MetalCrafts</a></li>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'WE' %}">Weaving</a></li>
-                    </ul>
-                </li>
-                {% endcomment %}
+        
+               
 
                 <!--<li class="nav-item">
                         <a class="nav-link text-black" href="/about/">About Us</a>
@@ -80,9 +65,28 @@
                 <li class="nav-item">
                     <a class="nav-link active text-black" aria-current="page" href="/">Home</a>
                 </li>&nbsp;&nbsp;&nbsp;&nbsp;
-                <li class="nav-item">
+                <li class="nav-item dropdown mx-2">
+                    <a class="nav-link dropdown-toggle text-black" href="#" id="profileDropDown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
+                    <ul class="dropdown-menu" aria-labelledby="profileDropDown">
+                        <li><a class="dropdown-item" href="/all_products/">All Categories</a></li>
+                        <div class="dropdown-divider"></div>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PAINTINGS' %}">Painting</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'SAREES' %}">Sarees</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'POTS' %}">Pots</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'JWELLERY' %}">Jwellery</a></li>
+                       <!-- <li><a class="dropdown-item" href="#">Pottery&Ceramics</a>
+                        </li>
+                        <li><a class="dropdown-item" href="#">Sculptures&Carving</a>
+                        </li>
+                        <li><a class="dropdown-item" href="#">Handlooms</a></li>
+                        <li><a class="dropdown-item" href="#">MetalCrafts</a></li>
+                        <li><a class="dropdown-item" href="#">Weaving</a></li>-->
+                    </ul>
+                </li>
+               <!-- <li class="nav-item">
                     <a class="nav-link text-black" href="/all_products/">Categories</a>
-                </li>&nbsp;&nbsp;&nbsp;&nbsp;
+                </li>&nbsp;&nbsp;&nbsp;&nbsp;-->
                 <li class="nav-item dropdown mx-2">
                     <a class="nav-link dropdown-toggle text-black" href="#" id="profileDropDown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">User</a>
