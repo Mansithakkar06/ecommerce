@@ -29,7 +29,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-info navbar-custom ">
+    <nav class="navbar navbar-expand-lg" style="background-color:#4b4276;">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
                 <img src="{% static 'app/images/logonew.png' %}" width="230" height="50" />
@@ -40,7 +40,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <form action="{%url 'ecomm:search'%}" method="GET" class="d-flex nav-search" role="search">
+                <form action="{%url 'ecomm:search'%}" method="GET" class="d-flex nav-search" role="search" style="margin-left:100px">
                     <input id="search-icon" class="form-control me-2" type="search" name="keyword"
                         placeholder="Search for the products you want......" aria-label="Search" size=40
                         style="background-color: rgb(240,245,255);">
@@ -63,18 +63,19 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
                 <li class="nav-item">
-                    <a class="nav-link active text-black" aria-current="page" href="/">Home</a>
+                    <a class="nav-link active text-white" aria-current="page" href="/">Home</a>
                 </li>&nbsp;&nbsp;&nbsp;&nbsp;
                 <li class="nav-item dropdown mx-2">
-                    <a class="nav-link dropdown-toggle text-black" href="#" id="profileDropDown" role="button"
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="profileDropDown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
                     <ul class="dropdown-menu" aria-labelledby="profileDropDown">
                         <li><a class="dropdown-item" href="/all_products/">All Categories</a></li>
                         <div class="dropdown-divider"></div>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PAINTINGS' %}">Painting</a></li>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'SAREES' %}">Sarees</a></li>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'POTS' %}">Pots</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PAINTINGS' %}">Indian Painting Style</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'SAREES' %}">Handlooms</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'POTS' %}">Pottery & Ceramics</a></li>
                         <li><a class="dropdown-item" href="{% url 'ecomm:category' 'JWELLERY' %}">Jwellery</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'SCULPTURES' %}">Sculptures & Carving</a></li>
                        <!-- <li><a class="dropdown-item" href="#">Pottery&Ceramics</a>
                         </li>
                         <li><a class="dropdown-item" href="#">Sculptures&Carving</a>
@@ -88,11 +89,11 @@
                     <a class="nav-link text-black" href="/all_products/">Categories</a>
                 </li>&nbsp;&nbsp;&nbsp;&nbsp;-->
                 <li class="nav-item dropdown mx-2">
-                    <a class="nav-link dropdown-toggle text-black" href="#" id="profileDropDown" role="button"
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="profileDropDown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">User</a>
                     <ul class="dropdown-menu" aria-labelledby="profileDropDown">
-                        <li><a class="dropdown-item" href="{% url "ecomm:myprofile" %}">Profile</a></li>
-                        <li><a class="dropdown-item" href="{% url "ecomm:myorders" %}">Orders</a></li>
+                        <li><a class="dropdown-item" href="{% url "ecomm:myprofile" %}">My Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url "ecomm:myorders" %}">My Orders</a></li>
                         {% if request.user.customer %}
                         <li><a class="dropdown-item" href="/change-password/">Change Password</a></li>
                         {% endif %}
@@ -103,30 +104,30 @@
 
                 <!-- cart icon in nav bar -->
                 <li class="nav-item mx-2">
-                    <a href="{% url 'ecomm:mycart' %}" class="nav-link text-black"><i style="font-size:24px"
+                    <a href="{% url 'ecomm:mycart' %}" class="nav-link text-white"><i style="font-size:24px"
                             class="fa">&#xf07a;</i>
                     </a>
                 </li>&nbsp;&nbsp;
-                <li class="nav-item mx-2">
-                    <a href="#" class="nav-link text-black"><i style="font-size:24px" class="fa">&#xf004;</i>
+                {% comment %} <li class="nav-item mx-2">
+                    <a href="#" class="nav-link text-white"><i style="font-size:24px" class="fa">&#xf004;</i>
                     </a>
 
-                </li>
+                </li> {% endcomment %}
 
                 {% if request.user.customer %}
                 <li class="nav-item mx-2">
-                    <a href="{% url 'ecomm:customerlogout'%}" class="nav-link text-black">Logout</a>
+                    <a href="{% url 'ecomm:customerlogout'%}" class="nav-link text-white">Logout</a>
                 </li>
 
                 {% else %}
                 <li class="nav-item mx-2">
-                    <a href="/login/" class="nav-link text-black">Login</a>
+                    <a href="/login/" class="nav-link text-white">Login</a>
                 </li>&nbsp;&nbsp;&nbsp;&nbsp;
                 {% endif %}
 
 
                 <li class="nav-item mx-2">
-                    <a href="/admin-login/" class="nav-link text-black">Become a Seller</a>
+                    <a href="/admin-login/" class="nav-link text-white">Become a Seller</a>
                 </li>&nbsp;&nbsp;&nbsp;&nbsp;
 
                 {% comment %} <li class="nav-item"> <button class="btn btn-outline-primary" type="submit"
@@ -142,9 +143,74 @@
 
     {% block content %}{% endblock content %}
     <br><br>
-    <footer class="container-fluid fixed-bottom text-center p-2 mt-5 footer-custom text-white  bg-info">
-
-        Copyright:2024 || Develop by: Mansi Thakkar, Disha Prajapati, Vrunda Kelaiya
+    <footer class="container-fluid text-center p-2 mt-5 footer-custom text-white"style="background-color:#1d1d24;">
+        <div>
+            <div class="footer-area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h4 class="footer-heading">HandMadeCharm</h4>
+                            <div class="footer-underline"></div>
+                            <p>
+                                Discover unique, handcrafted treasures that celebrate tradition and artistry. Each piece is lovingly made by
+                                skilled artisans, ensuring quality and authenticity. Shop with us to support sustainable practices and bring
+                                home a touch of elegance and heritage.
+                            </p>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="footer-heading">Quick Links</h4>
+                            <div class="footer-underline"></div>
+                            <div class="mb-2"><a href="{% url 'ecomm:home' %}" class="text-white">Home</a></div>
+                            <div class="mb-2"><a href="{% url 'ecomm:mycart' %}" class="text-white">My Cart</a></div>
+                            <div class="mb-2"><a href="/admin-login/" class="text-white">Become a Seller</a></div>
+                           
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="footer-heading">Shop Now</h4>
+                            <div class="footer-underline"></div>
+                            <div class="mb-2"><a href="" class="text-white">Handlooms</a></div>
+                            <div class="mb-2"><a href="" class="text-white">Indian Painting Style</a></div>
+                            <div class="mb-2"><a href="" class="text-white">Jwellery</a></div>
+                            <div class="mb-2"><a href="" class="text-white">Pottery & Ceramics</a></div>
+                            <div class="mb-2"><a href="" class="text-white">Sculptures & Carving</a></div>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="footer-heading">Reach Us</h4>
+                            <div class="footer-underline"></div>
+                            <div class="mb-2">
+                                <p>
+                                    <i class="fa fa-map-marker"></i> L.D. College of Engineering, Opp Gujarat University,
+                                    Navrangpura, Ahmedabad - 380015.
+                                    GUJARAT INDIA
+                                </p>
+                            </div>
+                            <div class="mb-2">
+                                <a href="" class="text-white">
+                                    <i class="fa fa-phone"></i> +91 888-999-7777
+                                </a>
+                            </div>
+                            <div class="mb-2">
+                                <a href="" class="text-white">
+                                    <i class="fa fa-envelope"></i> HandMadeCharm@gmail.com
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright-area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <center><p class="reserved"> &copy; 2024 - HandMadeCharm -  Ecommerce || All rights reserved.</p></center>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        
 
     </footer>
 

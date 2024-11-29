@@ -6,7 +6,7 @@
     <div class="container">
         <div class="row">
             {% if messages %}
-                <p style="color:yellow;font-size:20px;">
+                <p style="color:blue;font-size:20px;">
                     {% for msg in messages %}
                     {{msg}}
                     {% endfor %}
@@ -14,46 +14,46 @@
             {% endif %}
         </div>
         <div class="row">
-            <div class="col-md-6 mx-auto">
-                <h3>Add Products</h3> <hr>
-            <form action="/add-product/" method="POST" enctype="multipart/form-data">
+            <div class="col-md-6 mx-auto" style="background:#ccc8c882;margin:20px 0px 20px 80px;height:600px;width:500px;padding:40px 0px 20px 80px;border-radius:20px">
+                <h3 style="text-align:center">Add Products</h3> <hr>
+                <form action="/add-product/" method="POST" enctype="multipart/form-data" >
                     {% csrf_token %} 
-                    <label for="category">Category</label>
-                    <select name="category" id="category">
+                    <label for="category" style="width:100px">Category</label>
+                    <select name="category" id="category" style="margin-bottom:10px">
                         <option value="None" disabled selected>Select Category</option>
                         {% for category in categories %}
                         <option value="{{category.id}}">{{category.title}}</option>
                         {% endfor %}
                     </select>
-                    <p>
-                        <label for="title">Title</label>
+                    <p style="margin-bottom:10px">
+                        <label for="title" style="width:100px">Title</label>
                         <input type="text" name="title" id="title">
                     </p>
-                    <p>
-                        <label for="markPrice">Marked Price</label>
+                    <p style="margin-bottom:10px">
+                        <label for="markPrice" style="width:100px">Marked Price</label>
                         <input type="number" name="mrp" id="markPrice">
                     </p>
-                    <p>
-                        <label for="sellPrice">Selling Price</label>
+                    <p style="margin-bottom:10px">
+                        <label for="sellPrice" style="width:100px">Selling Price</label>
                         <input type="number" name="sp" id="sellPrice">
                     </p>
-                    <p>
-                        <label for="desc">Description</label>
-                        <textarea name="description" rows="5" cols="10" id="desc"></textarea>
+                    <p style="margin-bottom:10px"> 
+                        <label for="desc" style="width:100px">Description</label>
+                        <textarea name="description" rows="5" cols="23" id="desc"></textarea>
                     </p>
-                    <p>
-                        <label for="warranty">Warranty</label>
+                    <p style="margin-bottom:10px">
+                        <label for="warranty" style="width:100px">Warranty</label>
                         <input type="text" name="warranty" id="warranty">
                     </p>
-                    <p>
-                        <label for="retrnPolicy">Return Policy</label>
+                    <p style="margin-bottom:10px">
+                        <label for="retrnPolicy" style="width:100px">Return Policy</label>
                         <input type="text" name="returnPolicy" id="retrnPolicy">
                     </p>
-                    <p>
+                    <p style="margin-bottom:10px" style="width:100px">
                         <label for="ProductImage">Image</label>
                         <input type="file" name="ProductImage" id="ProductImage">
-                    </p>
-                    <input type="submit" value="Add Product" class="btn btn-primary">
+                    </p><br>
+                    <input type="submit" value="Add Product" class="btn btn-primary" style="margin-left:120px">
                 </form> 
             </div>
         </div>
