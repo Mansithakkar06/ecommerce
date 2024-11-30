@@ -1,22 +1,23 @@
 {% extends 'base.html' %}
 
 {% block title %} Customer Login {% endblock %}
+
 {% load crispy_forms_tags %}
+
 {% block content %}
-    <div class="container" style="background:#ccc8c882;margin:60px 100px 100px 470px;height:500px;width:600px;padding:40px 10px 20px 10px;border-radius:20px">
-        <div class="row">
-            <div class="col-md-6 mx-auto">
-                <h3>Customer Login Form</h3> <hr>
-                <form action="" method="POST">
+    <div class="container" style="margin:60px 100px 100px 520px;height:500px;width:500px;">
+        <div class="row" style="width:100%;height:100%">
+            <div class="col-md-6 mx-auto" style="background:#ccc8c882;width:100%;heigth:100%;border-radius:20px;padding:20px;box-shadow: 10px 13px 13px -15px #111">
+                <h3 style="text-align:center;padding:10px">Customer Login Form</h3> <hr>
+                <form action="" method="POST" style="margin:20px 40px">
                     {% csrf_token %} 
                     {{form|crispy }} <br>
                     {% if error %}
                         <li style="color:red">{{error}}</li>
                     {% endif %}
-                    <button class="btn btn-primary">Login as a Customer</button> <br>
+                    <button class="btn btn-primary" style="margin-left:30%">Login as a Customer</button> <br>
+                    <p style="margin:10px 10px 10px 50px">or don't have account? <a href="{% url "ecomm:customerregistration" %}">Register here</a></p>
                 </form>
-                <br>
-                <p>or don't have account? <a href="{% url "ecomm:customerregistration" %}">Register here</a>
             </div>
         </div>
     </div>

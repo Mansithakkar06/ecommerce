@@ -33,8 +33,51 @@ class HomeView(EcomMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['product_list']=Product.objects.all().order_by("-id")
-        self.request.COOKIES.pop("messages", "")
+        if self.request.COOKIES.get("messages_shown"):
+            
+            messages.get_messages(self.request).used = True  # Clear messages
+            self.request.COOKIES.pop("messages_shown", None)
+            
         return context
+        
+    
+    def post(self,request):
+        
+        pId = request.POST.get('pid')
+        
+        product_obj = Product.objects.get(id=pId)
+        cart_id = self.request.session.get("cart_id",None)
+        if cart_id:
+            
+            cart_obj = Cart.objects.get(id=cart_id)
+            this_product_in_cart = cart_obj.cartproduct_set.filter(product = product_obj)
+            #item already exists in cart
+            if this_product_in_cart.exists():
+                
+                cartproduct = this_product_in_cart.last()
+                cartproduct.quantity += 1
+                cartproduct.subtotal += product_obj.selling_price
+                cartproduct.save()
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+            else:
+                
+                cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+            messages.success(self.request, 'Your action was successful!')
+        else:
+            
+            cart_obj = Cart.objects.create(total=0)
+            self.request.session['cart_id'] = cart_obj.id
+            cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+            cart_obj.total += product_obj.selling_price
+            cart_obj.save()
+            
+        response = redirect("/")
+        response.set_cookie("messages_shown", True, max_age=2)
+        
+        return response 
 
 class CategoryView(EcomMixin,TemplateView):
     template_name="category.html"
@@ -47,7 +90,53 @@ class CategoryView(EcomMixin,TemplateView):
         context = {}
         context['products'] = products
         context['cat'] = category
+        
+        if self.request.COOKIES.get("messages_shown"):
+            messages.get_messages(self.request).used = True  # Clear messages
+            self.request.COOKIES.pop("messages_shown", None)
         return context
+        
+    
+    def post(self,request,**kwargs):
+        
+        pId = request.POST.get('pid')
+        
+        cat = kwargs['cat']
+        cat = cat.replace('-','')
+        
+        product_obj = Product.objects.get(id=pId)
+        cart_id = self.request.session.get("cart_id",None)
+        if cart_id:
+            
+            cart_obj = Cart.objects.get(id=cart_id)
+            this_product_in_cart = cart_obj.cartproduct_set.filter(product = product_obj)
+            #item already exists in cart
+            if this_product_in_cart.exists():
+                
+                cartproduct = this_product_in_cart.last()
+                cartproduct.quantity += 1
+                cartproduct.subtotal += product_obj.selling_price
+                cartproduct.save()
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+            else:
+                
+                cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+            messages.success(self.request, 'Your action was successful!')
+        else:
+            
+            cart_obj = Cart.objects.create(total=0)
+            self.request.session['cart_id'] = cart_obj.id
+            cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+            cart_obj.total += product_obj.selling_price
+            cart_obj.save()
+            
+        response = redirect(f"/category/{cat}")
+        response.set_cookie("messages_shown", True, max_age=2)
+        
+        return response 
     
     
 class AllProductsView(EcomMixin, TemplateView):
@@ -56,7 +145,52 @@ class AllProductsView(EcomMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         context['allcategories'] = Category.objects.all()
+        
+        if self.request.COOKIES.get("messages_shown"):
+            messages.get_messages(self.request).used = True  # Clear messages
+            self.request.COOKIES.pop("messages_shown", None)
+            
         return context
+    
+    def post(self,request):
+        
+        pId = request.POST.get('pid')
+        
+        product_obj = Product.objects.get(id=pId)
+        cart_id = self.request.session.get("cart_id",None)
+        if cart_id:
+            
+            cart_obj = Cart.objects.get(id=cart_id)
+            this_product_in_cart = cart_obj.cartproduct_set.filter(product = product_obj)
+            #item already exists in cart
+            if this_product_in_cart.exists():
+                
+                cartproduct = this_product_in_cart.last()
+                cartproduct.quantity += 1
+                cartproduct.subtotal += product_obj.selling_price
+                cartproduct.save()
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+            else:
+                
+                cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+            messages.success(self.request, 'Your action was successful!')
+        else:
+            
+            cart_obj = Cart.objects.create(total=0)
+            self.request.session['cart_id'] = cart_obj.id
+            cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+            cart_obj.total += product_obj.selling_price
+            cart_obj.save()
+            
+        response = redirect("/all_products")
+        response.set_cookie("messages_shown", True, max_age=2)
+        
+        return response        
+            
+        
 
 class ProductDetailView(EcomMixin, TemplateView):
     template_name = "productdetail.html"
@@ -68,7 +202,49 @@ class ProductDetailView(EcomMixin, TemplateView):
          product.view_count += 1
          product.save()
          context['product'] = product
+         
+         if self.request.COOKIES.get("messages_shown"):
+            messages.get_messages(self.request).used = True  # Clear messages
+            self.request.COOKIES.pop("messages_shown", None)
          return context
+     
+    def post(self,request,**kwargs):
+        
+        pId = request.POST.get('pid')
+        
+        product_obj = Product.objects.get(id=pId)
+        cart_id = self.request.session.get("cart_id",None)
+        if cart_id:
+            
+            cart_obj = Cart.objects.get(id=cart_id)
+            this_product_in_cart = cart_obj.cartproduct_set.filter(product = product_obj)
+            #item already exists in cart
+            if this_product_in_cart.exists():
+                
+                cartproduct = this_product_in_cart.last()
+                cartproduct.quantity += 1
+                cartproduct.subtotal += product_obj.selling_price
+                cartproduct.save()
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+            else:
+                
+                cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+            messages.success(self.request, 'Your action was successful!')
+        else:
+            
+            cart_obj = Cart.objects.create(total=0)
+            self.request.session['cart_id'] = cart_obj.id
+            cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+            cart_obj.total += product_obj.selling_price
+            cart_obj.save()
+            
+        response = redirect(f"/product/{product_obj.slug}/")
+        response.set_cookie("messages_shown", True, max_age=2)
+        
+        return response 
     
 class AddToCartView(EcomMixin, TemplateView):
     template_name = "addtocart.html"
@@ -242,6 +418,7 @@ class FavProductsView(EcomMixin,TemplateView):
 class CheckoutView(EcomMixin, CreateView):
     template_name = "checkout.html"
     form_class = CheckoutForm
+    
     success_url = reverse_lazy("ecomm:home")
     
     def dispatch(self, request, *args, **kwargs):
@@ -251,6 +428,15 @@ class CheckoutView(EcomMixin, CreateView):
             return redirect("/login/?next=/checkout/")
         return super().dispatch(request, *args, **kwargs)
         
+    def get_initial(self):
+        initial = super().get_initial()
+        if self.request.user.is_authenticated:
+            customer = self.request.user.customer
+            initial['ordered_by'] = customer.full_name
+            initial['shipping_address'] = customer.address
+            initial['mobile'] = customer.mobile
+            initial['email'] = self.request.user.email
+        return initial
     
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
@@ -515,6 +701,70 @@ class MyProfileView(FormView):
 
 
 #seller pages
+
+class SellerProfileView(FormView):
+    def get(self,request):
+        if request.user.is_authenticated:
+            try:
+                try:
+                    current_user = Seller.objects.get(user__id=request.user.id)
+                except:
+                    current_user = Customer.objects.get(user__id=request.user.id)
+            except:
+                return redirect("/login/?next=/seller-profile/")
+            if current_user is not None:
+                #messages = None
+                return render(request, "adminpages/sellerprofile.html", locals())
+            
+            # form = UserProfileForm(request.POST or None, instance=current_user)
+            
+            # if form.is_valid():
+            #     form.save()
+            #     messages.success(request, "Your profile has been updated")
+            #     return redirect('home')
+            #return render(request, "myprofile.html")
+        else:
+            return redirect("/login/?next=/seller-profile/")
+        
+    def post(self,request):
+        if request.user.is_authenticated:
+            username = request.POST.get('uname')
+            fullname = request.POST.get('fullname')
+            mobile = request.POST.get('mobile')
+            email = request.POST.get('email')
+            address = request.POST.get('address')
+            try:
+                try:
+                    current_user = Seller.objects.get(user__id=request.user.id)
+                except:
+                    current_user = Customer.objects.get(user__id=request.user.id)
+            except:
+                return redirect("/login/?next=/seller-profile/")
+            if current_user is not None:
+                #current_user.user.username=username
+                absUser = User.objects.get(id=current_user.user.id)
+                absUser.email = email
+                absUser.username=username
+                absUser.save()
+                current_user.full_name=fullname
+                current_user.mobile=mobile
+                #current_user.user.email=email
+                current_user.address=address
+                current_user.save()
+                messages.success(request, "Your profile has been updated")
+                return redirect('/seller-profile')
+            
+            # form = UserProfileForm(request.POST or None, instance=current_user)
+            
+            # if form.is_valid():
+            #     form.save()
+            #     messages.success(request, "Your profile has been updated")
+            #     return redirect('home')
+            #return render(request, "myprofile.html")
+        else:
+            return redirect("/login/?next=/seller-profile/")
+
+
 class SellerRegistrationView(CreateView):
     template_name = "adminpages/sellerregistration.html"
     form_class = SellerRegistrationForm
@@ -604,25 +854,62 @@ class SellerHomeView(SellerRequiredMixin, TemplateView):
     template_name = "adminpages/adminhome.html"
     
     def get_context_data(self, **kwargs):
-            context = super().get_context_data(**kwargs)
-            context["pendingorders"] = Order.objects.filter(order_status="Order Received").order_by("-id")
-            return context
+        context = super().get_context_data(**kwargs)
+        
+        # Get the logged-in seller
+        seller = Seller.objects.get(user=self.request.user)
+        
+        # Filter pending orders that contain products from this seller
+        context["pendingorders"] = Order.objects.filter(
+            order_status="Order Received",
+            cart__cartproduct__product__seller=seller
+        ).distinct().order_by("-id")
+        
+        return context
 
 
 class  SellerOrderDetailView(SellerRequiredMixin, DetailView):
     template_name = "adminpages/adminorderdetail.html"
     model = Order
     context_object_name = "ord_obj"
-    
+
+    def get_queryset(self):
+        # Ensure the seller can only access orders with their products
+        seller = Seller.objects.get(user=self.request.user)
+        return Order.objects.filter(cart__cartproduct__product__seller=seller).distinct()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["allstatus"] = ORDER_STATUS
+
+        # Get the logged-in seller
+        seller = Seller.objects.get(user=self.request.user)
+
+        # Filter CartProducts for this order that belong to the seller
+        order = self.object
+        
+        context["seller_products"] = order.cart.cartproduct_set.filter(product__seller=seller)
+        
+        totalPrice = 0
+        for product in context['seller_products']:
+            totalPrice += product.subtotal
+            
+        context['totalPrice'] = totalPrice
+        
+        context["allstatus"] = ORDER_STATUS  # For order status options
         return context
 
 class SellerOrderListView(SellerRequiredMixin, ListView):
     template_name = "adminpages/adminorderlist.html"
-    queryset = Order.objects.all().order_by("-id")
     context_object_name = "allorders"
+   
+    def get_queryset(self):
+        # Get the logged-in seller
+        seller = Seller.objects.get(user=self.request.user)
+        
+        # Filter orders based on cart products belonging to this seller
+        return Order.objects.filter(
+            cart__cartproduct__product__seller=seller
+        ).distinct().order_by("-id")
 
 
 class SellerOrderStatusChangeView(SellerRequiredMixin, View):
@@ -655,7 +942,8 @@ class AddProductView(SellerRequiredMixin, TemplateView):
         except:
             category = None
         if category is not None:
-            newProduct = Product(category=category,title=title,slug=title,marked_price=mrp,selling_price=sp,description=description,warranty=warranty,return_policy=returnPolicy,image=pImage)
+            seller = Seller.objects.get(user=self.request.user)
+            newProduct = Product(category=category,title=title,seller=seller,slug=title,marked_price=mrp,selling_price=sp,description=description,warranty=warranty,return_policy=returnPolicy,image=pImage)
             newProduct.save()
             messages.success(request, "Product Added Successfully")
             return redirect('/add-product')
@@ -671,58 +959,52 @@ class AddProductView(SellerRequiredMixin, TemplateView):
 
 class AllProductView(SellerRequiredMixin, ListView):
     template_name = "adminpages/allproduct.html"
-    queryset = Product.objects.all().order_by("-id")
     context_object_name = "allproducts"
+    
+    def get_queryset(self):
+        seller = Seller.objects.get(user=self.request.user)
+        
+        
+        
+        products =  Product.objects.filter(seller=seller).order_by("-id")
+        return products
+    
+    def post(self, request, *args, **kwargs):
+        # Handle product deletion
+        product_id = request.POST.get("product_id")
+        product = get_object_or_404(Product, id=product_id)
+        product.delete()
+        messages.success(request, "Product deleted successfully!")
+        return redirect("ecomm:allproducts")
 
 
 class UpdateProductView(FormView):
-    def get(self,request):
-        if request.user.is_authenticated:
-            try:
-                current_product = Product.objects.get(product__id=request.product.id)    
-            except:
-                return redirect("/adminlogin/?next=/update-product/")
-            if current_product is not None:
-                #messages = None
-                return render(request, "updateproduct.html", locals())
-            
-            # form = UserProfileForm(request.POST or None, instance=current_user)
-            
-            # if form.is_valid():
-            #     form.save()
-            #     messages.success(request, "Your profile has been updated")
-            #     return redirect('home')
-            #return render(request, "myprofile.html")
-        else:
-            return redirect("/adminlogin/?next=/update-product/")
-    
-    def get(self, request):
-        categories = Category.objects.all()
-        #print(categories)
-        return render(request, 'adminpages/updateproduct.html',locals())
         
     def post(self,request):
-        categoryId = request.POST.get('category')
+        productId = request.POST.get('productId')
         title = request.POST.get('title')
         mrp = request.POST.get('mrp')
         sp = request.POST.get('sp')
         description = request.POST.get('description')
         warranty = request.POST.get('warranty')
         returnPolicy = request.POST.get('returnPolicy')
-        pImage = request.FILES['ProductImage']
-        print(categoryId,title,mrp,sp,description,warranty,returnPolicy,pImage)
         try:
-            category = Category.objects.get(id=categoryId)
+            UpdatedProduct = Product.objects.get(id=productId)
         except:
-            category = None
-        if category is not None:
-            newProduct = Product(category=category,title=title,slug=title,marked_price=mrp,selling_price=sp,description=description,warranty=warranty,return_policy=returnPolicy,image=pImage)
-            newProduct.save()
+            UpdatedProduct = None
+        if UpdatedProduct is not None:
+            UpdatedProduct.title=title
+            UpdatedProduct.marked_price=mrp
+            UpdatedProduct.selling_price=sp
+            UpdatedProduct.description=description
+            UpdatedProduct.warranty=warranty
+            UpdatedProduct.return_policy=returnPolicy
+            UpdatedProduct.save()
             messages.success(request, "Product Updated Successfully")
-            return redirect('/update-product')
+            return redirect('/all-products')
         else:
             messages.error(request, "Error In Updating Product")
-            return redirect('/update-product')
+            return redirect('/all-products')
 
 
 

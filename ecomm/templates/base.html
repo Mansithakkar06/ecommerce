@@ -71,11 +71,21 @@
                     <ul class="dropdown-menu" aria-labelledby="profileDropDown">
                         <li><a class="dropdown-item" href="/all_products/">All Categories</a></li>
                         <div class="dropdown-divider"></div>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PAINTINGS' %}">Indian Painting Style</a></li>
+
+
+                        {% for category in categories %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'ecomm:category' category.title %}">{{ category.title }}</a>
+                        </li>
+                        {% endfor %}
+
+                        {% comment %} <li><a class="dropdown-item" href="{% url 'ecomm:category' 'PAINTINGS' %}">Indian Painting Style</a></li>
                         <li><a class="dropdown-item" href="{% url 'ecomm:category' 'SAREES' %}">Handlooms</a></li>
                         <li><a class="dropdown-item" href="{% url 'ecomm:category' 'POTS' %}">Pottery & Ceramics</a></li>
                         <li><a class="dropdown-item" href="{% url 'ecomm:category' 'JWELLERY' %}">Jwellery</a></li>
-                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'SCULPTURES' %}">Sculptures & Carving</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ecomm:category' 'SCULPTURES' %}">Sculptures & Carving</a></li> {% endcomment %}
+
+
                        <!-- <li><a class="dropdown-item" href="#">Pottery&Ceramics</a>
                         </li>
                         <li><a class="dropdown-item" href="#">Sculptures&Carving</a>
@@ -89,8 +99,14 @@
                     <a class="nav-link text-black" href="/all_products/">Categories</a>
                 </li>&nbsp;&nbsp;&nbsp;&nbsp;-->
                 <li class="nav-item dropdown mx-2">
+
+                    {% if request.user.is_authenticated %}
                     <a class="nav-link dropdown-toggle text-white" href="#" id="profileDropDown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false"> {{ request.user.username }} </a>
+                        {% else %}
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="profileDropDown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">User</a>
+                        {% endif %}
                     <ul class="dropdown-menu" aria-labelledby="profileDropDown">
                         <li><a class="dropdown-item" href="{% url "ecomm:myprofile" %}">My Profile</a></li>
                         <li><a class="dropdown-item" href="{% url "ecomm:myorders" %}">My Orders</a></li>
@@ -170,11 +186,14 @@
                         <div class="col-md-3">
                             <h4 class="footer-heading">Shop Now</h4>
                             <div class="footer-underline"></div>
-                            <div class="mb-2"><a href="" class="text-white">Handlooms</a></div>
-                            <div class="mb-2"><a href="" class="text-white">Indian Painting Style</a></div>
-                            <div class="mb-2"><a href="" class="text-white">Jwellery</a></div>
-                            <div class="mb-2"><a href="" class="text-white">Pottery & Ceramics</a></div>
-                            <div class="mb-2"><a href="" class="text-white">Sculptures & Carving</a></div>
+
+
+
+                            <div class="mb-2"><a href="{% url 'ecomm:category' 'SAREES' %}" class="text-white">Handlooms</a></div>
+                            <div class="mb-2"><a href="{% url 'ecomm:category' 'PAINTINGS' %}" class="text-white">Indian Painting Style</a></div>
+                            <div class="mb-2"><a href="{% url 'ecomm:category' 'JWELLERY' %}" class="text-white">Jwellery</a></div>
+                            <div class="mb-2"><a href="{% url 'ecomm:category' 'POTS' %}" class="text-white">Pottery & Ceramics</a></div>
+                            <div class="mb-2"><a href="{% url 'ecomm:category' 'SCULPTURES' %}" class="text-white">Sculptures & Carving</a></div>
                         </div>
                         <div class="col-md-3">
                             <h4 class="footer-heading">Reach Us</h4>

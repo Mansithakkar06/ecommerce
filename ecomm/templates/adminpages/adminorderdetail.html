@@ -25,7 +25,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for cp in ord_obj.cart.cartproduct_set.all %}
+                    {% comment %} {% for cp in ord_obj.cart.cartproduct_set.all %} {% endcomment %}
+                    {% for cp in seller_products  %}
+
+ 
                         <tr>
                             <td>{{forloop.counter}}</td>
                             <td><a target="_blank" href="{% url 'ecomm:productdetail' cp.product.slug %}">{{cp.product.title}}({{cp.product.id}})</a></td>
@@ -33,10 +36,12 @@
                             <td>{{cp.quantity}}</td>
                             <td>{{cp.subtotal}}</td>
                         </tr>
+
                     {% endfor %}
                     <tr>
                         <th colspan="4" class="text-right">Total: </th>
-                        <th>Rs {{ord_obj.total|intcomma}}/-</th>
+                        {% comment %} <th>Rs {{ord_obj.total|intcomma}}/-</th> {% endcomment %}
+                        <th>Rs {{totalPrice}}/-</th>
                     </tr>
                 </tbody>
             </table>

@@ -9,10 +9,10 @@
 <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active" style="height:500px";"width:auto";"overflow:hidden";"object-fit:cover">
-      <img src="{% static 'app/images/banner/handicraft-slider-1.jpeg'%}" class="d-block w-100" alt="banner image" style="height:500px";"width:auto" >
+      <img src="{% static 'app/images/banner/handicraft-slider-1.jpeg'%}" class="d-block w-100" alt="banner image" style="height:inherit";"width:inherit" >
     </div>
     <div class="carousel-item" style="height:500px";"width:auto";"overflow:hidden";"object-fit:cover">
-      <img src="{% static 'app/images/banner/handicraft-slider-2.jpg'%}" class="d-block w-100" alt="banner image" style="height:500px";"width:auto">
+      <img src="{% static 'app/images/banner/handicraft-slider-2.jpg'%}" class="d-block w-100" alt="banner image" style="height:inherit";"width:inherit">
     </div>
     <div class="carousel-item" style="height:500px";"width:auto";"overflow:hidden";"object-fit:cover">
       <img src="{% static 'app/images/banner/handicraft-slider-3.jpg'%}" class="d-block w-100" alt="banner image" style="height:500px";"width:auto">
@@ -30,6 +30,15 @@
 
 {% endblock slider %}
 {% block information %}
+
+{% if messages %}
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+<script> alertify.set('notifier', 'position', 'top-right');
+  alertify.success("product added successfully");
+</script>
+
+{% endif %}
+
 <div class="container">
   <div class="row text-center p-5 text-white border-bottom shadow"style="background-color:#4b4276;">
     <small class="fs-5">
@@ -42,33 +51,28 @@
 </div>
 {% endblock information %}
 {% block content %}
+
+
+
+
 <div class="container">
   <div class="row mt-3">
     {% for p in product_list %}
+    <form action="" method="post" style="display: contents;">
+      {% csrf_token %}
     <div class="col-md-3 mt-3 mb-3">
       <a href="{% url 'ecomm:productdetail' p.slug %}"><img src="{{p.image.url}}" alt="product image" height="200px"
           width="200px"></a>
       <h5><a href="{% url 'ecomm:productdetail' p.slug %}">{{p.title}}</a></h5>
       <p class="mt-1"><del>Rs.{{p.marked_price}}.00 </del> &nbsp;&nbsp;<b> Rs.&nbsp;{{p.selling_price}}.00</b></p>
-      <a class="btn btn-success"  href="{% url 'ecomm:addtocart' p.id %}">Add to cart</a>
+      <input hidden type="text" value="{{p.id}}" name="pid">
+      <button class="btn btn-success" type="submit">Add to cart</button>
+      {% comment %} <a class="btn btn-success"  href="{% url 'ecomm:addtocart' p.id %}">Add to cart</a> {% endcomment %}
     </div>
+  </form>
     {% comment %}  {% endcomment %}
     {% endfor %}
   </div>
 </div>
-{% if messages %}
-<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
-<script> alertify.set('notifier', 'position', 'top-right');
-  alertify.success("product added successfully");
-</script>
-
-<script>
-  function mess(){
-    <script> alertify.set('notifier', 'position', 'top-right');
-      alertify.success("product added successfully");
-    </script>
-  }
-</script>
-{% endif %}
 
 {% endblock content %}

@@ -3,6 +3,15 @@
 {% block title %} All Products {% endblock%}
 
 {% block content%}
+{% if messages %}
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+<script>
+    alertify.set('notifier', 'position', 'top-right');
+    {% for msg in messages %}
+        alertify.success("{{ msg }}");
+    {% endfor %}
+</script>
+{% endif %}
 <div class="container">
     <div class="row">
         <div class="col-md-12">
@@ -29,8 +38,69 @@
                         <td>{{product.marked_price}}</td>
                         <td>{{product.selling_price}}</td>
                         <td><img src="{{product.image.url}}" alt="{{product.title}}" style="width:100px;height:100px;"></td>
-                        <td><a href="updateproduct.html"><button name="update">Update</button></a></td>
-                        <td><a href="#"><button name="Delete">Delete</button></a></td>                        
+                        <td>
+                            <!-- Button trigger modal --><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#{{product.id}}">
+                            Update Product
+                          </button></td>
+
+<!--Modal Start-->
+
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="{{product.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="/update-product/" method="POST" enctype="multipart/form-data">
+                {% csrf_token %} 
+                <input type="number" name="productId" value="{{product.id}}" hidden>
+                <p>
+                    <label for="title">Title</label>
+                    <input type="text" name="title" value="{{product.title}}" id="title">
+                </p>
+                <p>
+                    <label for="markPrice">Marked Price</label>
+                    <input type="number" name="mrp" value="{{product.marked_price}}" id="markPrice">
+                </p>
+                <p>
+                    <label for="sellPrice">Selling Price</label>
+                    <input type="number" name="sp" value="{{product.selling_price}}" id="sellPrice">
+                </p>
+                <p>
+                    <label for="desc">Description</label>
+                    <textarea name="description" rows="5" cols="20" id="desc">{{product.description}}</textarea>
+                </p>
+                <p>
+                    <label for="warranty">Warranty</label>
+                    <input type="text" name="warranty" value="{{product.warranty}}" id="warranty">
+                </p>
+                <p>
+                    <label for="retrnPolicy">Return Policy</label>
+                    <input type="text" name="returnPolicy" value="{{product.return_policy}}" id="retrnPolicy">
+                </p>
+                <input type="submit" value="Update Product" class="btn btn-primary">
+            </form> 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!--Modal Start-->
+
+
+                        <td>
+                            <form method="POST" action="">
+                                {% csrf_token %}
+                                <input type="hidden" name="product_id" value="{{ product.id }}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
