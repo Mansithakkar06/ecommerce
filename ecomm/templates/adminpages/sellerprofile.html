@@ -2,13 +2,6 @@
 {% block title %} My Profile {% endblock %}
 {% block content %}
 
-<header class="bg-dark py-5">
-    <div class="container px-4 px-lg-5 my-5">
-        <div class="text-center text-white">
-            <h1 class="display-4 fw-bolder">Update Info</h1>
-        </div>
-    </div>
-</header>
 
 <div class="container">
     
@@ -21,10 +14,10 @@
             </p>
         {% endif %}
     </div>
-    <div class="row">
+    <div class="row" style="background:#ccc8c882;margin:40px 0px 20px 400px;height:550px;width:500px;padding:20px 0px 20px 20px;border-radius:20px">
         <div class="col-md-6 offset-md-3">
             <br>
-            <form method="POST" action="{% url 'ecomm:adminpages/sellerprofile' %}">
+            <form method="POST" action="{% url 'ecomm:sellerprofile' %}">
                 {% csrf_token %}
                 <p>
                 <label for="uname">User Name</label>

@@ -2,6 +2,14 @@
 {% load static %}
 {% block title %}{% endblock title %}
 {% block content %}
+
+{% if messages %}
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+<script> alertify.set('notifier', 'position', 'top-right');
+  alertify.success("product added successfully");
+</script>
+
+{% endif %}
 <div class=container>
     <h1 class="mt-3 text-center">{{cat.title}}</h1><hr>
     
@@ -9,15 +17,23 @@
     {% comment %} {% for cat_ in cat %}{% endcomment %}
     <div class="row"> 
         {% for p in products %}
+        <form action="" method="post" style="display: contents;">
+            {% csrf_token %}
         <div class="col-md-3 mt-3 mb-3">
             <a href="{% url 'ecomm:productdetail' p.slug %}"><img src="{{p.image.url}}" alt="product image"
                     height="200px" width="200px"></a>
             <h5><a href="{% url 'ecomm:productdetail' p.slug %}">{{p.title}}</a></h5>
             <p class="mt-1"><del>{{p.marked_price}} </del> &nbsp;&nbsp;<b> ₹&nbsp;{{p.selling_price}}</b></p>
-            <a class="btn btn-success" href="{% url 'ecomm:addtocart' p.id %}" onclick="alertmsg()">Add to cart</a>
+            
+            <input hidden type="text" value="{{p.id}}" name="pid">
+            <button class="btn btn-success" type="submit">Add to cart</button>
+
+            {% comment %} <a class="btn btn-success" href="{% url 'ecomm:addtocart' p.id %}" onclick="alertmsg()">Add to cart</a> {% endcomment %}
         </div>
+    </form>
         {% endfor %}
-    {% comment %} </div>
-    {% endfor %} {% endcomment %}
+    </div>
+    {% comment %} {% endfor %}  {% endcomment %}
 </div>
 {% endblock content %}
+

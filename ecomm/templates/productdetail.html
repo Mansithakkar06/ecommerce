@@ -2,6 +2,14 @@
 {% block title %}{{product.title}}{% endblock title %}{{product.title}}
 
 {% block content %}
+
+{% if messages %}
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+<script> alertify.set('notifier', 'position', 'top-right');
+  alertify.success("product added successfully");
+</script>
+
+{% endif %}
 <div class="container">
     <h3>Product: {{product.title}}</h3>
     <div class="row">
@@ -19,10 +27,16 @@
             <p class="text-primary">Return Policy : {{product.return_policy}}</p>
             <hr>
             <p>{{product.description}}</p>
-            <a href="{% url 'ecomm:addtocart' product.id %}" class="btn btn-success" onclick="alertmsg()">Add to cart</a>
+            {% comment %} <a href="{% url 'ecomm:addtocart' product.id %}" class="btn btn-success" onclick="alertmsg()">Add to cart</a> {% endcomment %}
             <!-- <form action="" method="POST">
                 <button class="btn btn-warning" type="submit">Buy Now</button>    
             </form> -->
+            <form action="" method="post" style="display: contents;">
+                {% csrf_token %}
+                <input hidden type="text" value="{{product.id}}" name="pid">
+                <button class="btn btn-success" type="submit">Add to cart</button>
+            </form>
+            
             <a href="{% url 'ecomm:addtocart' product.id %}?next=/checkout/" class="btn btn-warning">Buy Now</a>
             <a pid={{product.id}} class="minus-wishlist btn btn-danger shadow px-5 py-2 ms-4"><i class="fa fa-heart" style="color:red"></i></a>
         </div>

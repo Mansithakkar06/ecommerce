@@ -13,7 +13,7 @@ class Seller(models.Model):
     
     
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username} - {self.id}"
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -46,6 +46,7 @@ class Product(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    seller = models.ForeignKey(Seller,on_delete=models.CASCADE)
     image = models.ImageField(upload_to="product")
     marked_price = models.PositiveIntegerField()
     selling_price = models.PositiveIntegerField()

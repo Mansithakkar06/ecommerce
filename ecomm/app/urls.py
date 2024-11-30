@@ -34,6 +34,6 @@ urlpatterns = [
     path("seller-register/", SellerRegistrationView.as_view(), name="sellerregistration"), 
     path("add-product/", AddProductView.as_view(), name="addproduct"), 
     path("all-products/", AllProductView.as_view(), name="allproducts"), 
-    path("seller-profile/", MyProfileView.as_view(), name="sellerprofile"),
+    path("seller-profile/", SellerProfileView.as_view(), name="sellerprofile"),
     path("update-product/", UpdateProductView.as_view(), name="updateproduct"),
 ]
