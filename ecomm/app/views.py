@@ -73,7 +73,6 @@ class ProductDetailView(EcomMixin, TemplateView):
 class AddToCartView(EcomMixin, TemplateView):
     template_name = "addtocart.html"
     
-    
     def get_success_url(self):
         print("in get url")
         if "next" in self.request.GET:
@@ -85,6 +84,63 @@ class AddToCartView(EcomMixin, TemplateView):
     
 
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #get product id from requested url
+        product_id = self.kwargs['pro_id']
+        #get product
+        product_obj = Product.objects.get(id=product_id)
+        #check if cart exists
+        cart_id = self.request.session.get("cart_id",None)
+        if cart_id:
+            cart_obj = Cart.objects.get(id=cart_id)
+            this_product_in_cart = cart_obj.cartproduct_set.filter(product = product_obj)
+            #item already exists in cart
+            if this_product_in_cart.exists():
+                cartproduct = this_product_in_cart.last()
+                cartproduct.quantity += 1
+                cartproduct.subtotal += product_obj.selling_price
+                cartproduct.save()
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+            #new item is added in cart
+            else:
+                cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+                cart_obj.total += product_obj.selling_price
+                cart_obj.save()
+                messages.success(self.request, 'Your action was successful!')
+        else:
+            cart_obj = Cart.objects.create(total=0)
+            self.request.session['cart_id'] = cart_obj.id
+            cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate = product_obj.selling_price, quantity = 1, subtotal = product_obj.selling_price)
+            cart_obj.total += product_obj.selling_price
+            cart_obj.save()
+            
+
+        #check if product already exists in cart
+        
+        # if "next" in self.request.GET:
+        #     next_url = self.request.GET.get("next")
+        #     print("working")
+        #     return next_url
+        # else:
+        #     return context
+        
+        return context
+
+class BuyNowView(EcomMixin,TemplateView):
+     template_name = "buynow.html"
+    
+     def get_success_url(self):
+        print("in get url")
+        if "next" in self.request.GET:
+            next_url = self.request.GET.get("next")
+            print("working")
+            return next_url
+        else:
+            return self.success_url
+    
+
+     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         #get product id from requested url
         product_id = self.kwargs['pro_id']
@@ -180,7 +236,9 @@ class MyCartView(EcomMixin, TemplateView):
             cart = None
         context['cart'] = cart
         return context
-
+class FavProductsView(EcomMixin,TemplateView):
+    template_name="favproducts.html"
+    
 class CheckoutView(EcomMixin, CreateView):
     template_name = "checkout.html"
     form_class = CheckoutForm
