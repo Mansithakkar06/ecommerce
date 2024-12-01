@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}My Favorite Products{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <h1>My Favorite Products</h1>
+
+        {% if favorites %}
+            <ul class="list-group">
+                {% for favorite in favorites %}
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="{{ favorite.product.image.url }}" alt="{{ favorite.product.title }}" class="img-fluid" style="max-height: 150px; object-fit: cover;">
+                            </div>
+                            <div class="col-md-8">
+                                <h5>{{ favorite.product.title }}</h5>
+                                <p><strong>Price:</strong> Rs. {{ favorite.product.selling_price }}.00</p>
+                                <p><strong>Category:</strong> {{ favorite.product.category.title }}</p>
+                                <p>{{ favorite.product.description|truncatewords:20 }}</p>
+
+                                <a href="{% url 'ecomm:productdetail' favorite.product.slug %}" class="btn btn-primary">View Product</a>
+                                <form method="POST" action="{% url 'ecomm:toggle_favorite' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_id" value="{{ favorite.product.id }}">
+                                    <button type="submit" class="btn btn-danger mt-2">
+                                        Remove from Favorites
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You have no favorite products.</p>
+        {% endif %}
+    </div>
+{% endblock content %}

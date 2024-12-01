@@ -68,7 +68,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'app.context_processors.categories_processor'
+                'app.context_processors.categories_processor',
+                'app.context_processors.cart_count',  # Add this line
+
             ],
         },
     },
@@ -135,3 +137,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+PAYPAL_CLIENT_ID = 'ATic8mArY4ECeXZOJLy1tXfrDQU4yBFndtg-KBOCUtEz97IOkSbPtYv_GiK7nyAUgLJiQXwljlizqT8T'
+PAYPAL_CLIENT_SECRET = 'EGzuMG3YbN-8fl0FBdGKpZ0P2QFK1UWWatCY2WZXy0JIJs0CftxzTjmqsQ63ZPGZdW7SRig_hvWZH1ST'
+PAYPAL_MODE = 'sandbox'  # Change to 'live' when you're ready to go live

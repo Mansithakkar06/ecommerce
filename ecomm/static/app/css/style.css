@@ -10,36 +10,65 @@
 }
 
 
-.footer-area{
+.footer-area {
     padding: 40px 0px;
     background-color: #1d1d24;
     color: #fff;
 }
-.footer-area a{
+
+.footer-area a {
     text-decoration: none;
 }
-.footer-area .footer-heading{
+
+.footer-area .footer-heading {
     font-size: 24px;
     color: #fff;
 }
-.footer-area .footer-underline{
+
+.footer-area .footer-underline {
     height: 1px;
     width: 70%;
     background-color: #ddd;
     margin: 10px 40px 10px 50px;
 }
-.copyright-area{
+
+.copyright-area {
     padding: 14px 0px;
     background-color: #262626;
 }
-.copyright-area .reserved{
+
+.copyright-area .reserved {
     margin-bottom: 0px;
-    color:#ffff;
+    color: #ffff;
     text-align: center;
 }
+
 /* 
 .nav{
   position: sticky;
   top: 0;
   overflow: hidden;
 } */
+
+.cart-icon {
+    position: relative;
+    display: inline-block;
+}
+
+.cart-icon .badge {
+    position: absolute;
+    top: -5;
+    /* Adjust for vertical position */
+    right: 0;
+    /* Adjust for horizontal position */
+    transform: translate(50%, -50%);
+    /* Fine-tunes the position for top-right alignment */
+    padding: 5px 10px;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-block;
+    /* Ensures visibility */
+}

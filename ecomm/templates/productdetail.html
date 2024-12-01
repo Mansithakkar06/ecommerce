@@ -38,9 +38,39 @@
             </form>
             
             <a href="{% url 'ecomm:buynow' product.id %}" class="btn btn-warning">Buy Now</a>
-            <a pid={{product.id}} class="minus-wishlist btn btn-danger shadow px-5 py-2 ms-4"><i class="fa fa-heart" style="color:orange"></i></a>
+            <!--<a pid={{product.id}} class="minus-wishlist btn btn-danger shadow px-5 py-2 ms-4"><i class="fa fa-heart" style="color:orange"></i></a>-->
+
+             <!-- Add to Favorites Button -->
+             <form id="favoriteForm" method="post" action="{% url 'ecomm:toggle_favorite' %}">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <button type="submit" id="favoriteButton" class="btn btn-danger">
+                    {% if is_favorite %}
+                        Remove from Favorites
+                    {% else %}
+                        Add to Favorites
+                    {% endif %}
+                </button>
+            </form>
         </div>
     </div>
-    <hr>
 </div>
+
+<script>
+    const form = document.getElementById('favoriteForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': form.querySelector('input[name=csrfmiddlewaretoken]').value,
+            },
+            body: new FormData(form),
+        }).then(response => response.json())
+          .then(data => {
+              alert(data.message);
+              location.reload(); // Refresh the page to update the button text
+          });
+    });
+</script>
 {% endblock content %}

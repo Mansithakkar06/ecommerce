@@ -12,12 +12,18 @@ urlpatterns = [
     path("product/<slug:slug>/",ProductDetailView.as_view(),name="productdetail"),
     path("add_to_cart-<int:pro_id>/",AddToCartView.as_view(),name="addtocart"),
     path("buy_now-<int:pro_id>/",BuyNowView.as_view(),name="buynow"),
+    path('toggle-favorite/', ToggleFavoriteView.as_view(), name='toggle_favorite'),
+    path('my-favorites/', FavoriteProductsView.as_view(), name='toggle_favorite'),
     path("my-cart/",MyCartView.as_view(),name="mycart"),
     path("fav-products/",FavProductsView.as_view(),name="favproducts"),
     path("manage-cart/<int:cp_id>/",ManageCartView.as_view(),name="managecart"),
     path("empty-cart/",EmptyCartView.as_view(),name="emptycart"),
     path("checkout/",CheckoutView.as_view(),name="checkout"),
     path("search/",SearchView.as_view(), name="search"),
+    #payment 
+    path('create_payment/', create_payment, name='create_payment'),
+    path('execute_payment/', execute_payment, name='execute_payment'),
+    path('cancel_payment/', cancel_payment, name='cancel_payment'),
     # customer pages path
     path("register/", CustomerRegistrationView.as_view(), name="customerregistration"), 
     path("logout/", CustomerLogoutView.as_view(), name="customerlogout"),

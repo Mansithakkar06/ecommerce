@@ -119,13 +119,24 @@
 
 
                 <!-- cart icon in nav bar -->
-                <li class="nav-item mx-2">
-                    <a href="{% url 'ecomm:mycart' %}" class="nav-link text-white"><i style="font-size:24px"
-                            class="fa">&#xf07a;</i>
+                <a href="{% url 'ecomm:mycart' %}" class="cart-icon nav-link text-white" style="font-size:21px">
+                    <i class="fas fa-shopping-cart"></i>
+                    {% if cart_count > 0 %}
+                        <span class="badge bg-success">{{ cart_count }}</span>
+                    {% endif %}
+                </a>
+                
+
+
+                <!--<li class="nav-item mx-2">
+                    <a href="{% url 'ecomm:mycart' %}" class="nav-link text-white"><i style="font-size:24px" class="fa">&#xf07a;</i>
+                        {% if cart_count > 0 %}
+                            <span class="badge bg-primary">{{ cart_count }}</span>
+                        {% endif %}
                     </a>
-                </li>
+                </li>-->
                 <li class="nav-item mx-2">
-                    <a href="{% url 'ecomm:favproducts' %}" class="nav-link text-white"><i style="font-size:24px" class="fa">&#xf004;</i>
+                    <a href="{% url 'ecomm:toggle_favorite' %}" class="nav-link text-white mt-1"><i style="font-size:23px " class="fa">&#xf004;</i>
                     </a>
 
                 </li>
