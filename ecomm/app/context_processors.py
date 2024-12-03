@@ -6,12 +6,12 @@ def categories_processor(request):
 
 def cart_count(request):
     count = 0
-    if request.user.is_authenticated:
-        cart_id = request.session.get("cart_id")
-        if cart_id:
-            cart = Cart.objects.filter(id=cart_id).first()
-            if cart:
-                # count = sum(item.quantity for item in cart.cartproduct_set.all())
-                count = CartProduct.objects.filter(cart = cart).count()
+    # if request.user.is_authenticated:
+    cart_id = request.session.get("cart_id")
+    if cart_id:
+        cart = Cart.objects.filter(id=cart_id).first()
+        if cart:
+            # count = sum(item.quantity for item in cart.cartproduct_set.all())
+            count = CartProduct.objects.filter(cart = cart).count()
     return {'cart_count': count}
 

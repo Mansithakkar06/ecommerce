@@ -1,4 +1,16 @@
-<!-- payment_success.html -->
-<h1>Payment Successful!</h1>
+{% extends "base.html" %}
+
+
+{% comment %} <h1>Payment Successful!</h1>
 <p>Your order has been placed successfully.</p>
-<a href="{% url "ecomm:home" %}">Continue Shopping</a>
+<a href="{% url "ecomm:home" %}">Continue Shopping</a> {% endcomment %}
+
+{% block content %}
+<div class="card w-75">
+    <div class="card-body">
+      <h1 class="card-title">Payment Successful!</h1>
+      <p class="card-text">Your order has been placed successfully.</p>
+      <a href="{% url "ecomm:home" %}" class="btn btn-primary">Continue Shopping</a>
+    </div>
+</div>
+{% endblock content %}
