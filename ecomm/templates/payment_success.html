@@ -1,16 +1,21 @@
 {% extends "base.html" %}
-
+{% load static %}
 
 {% comment %} <h1>Payment Successful!</h1>
 <p>Your order has been placed successfully.</p>
-<a href="{% url "ecomm:home" %}">Continue Shopping</a> {% endcomment %}
+<a href="{% url " ecomm:home" %}">Continue Shopping</a> {% endcomment %}
 
 {% block content %}
-<div class="card w-75">
-    <div class="card-body">
-      <h1 class="card-title">Payment Successful!</h1>
-      <p class="card-text">Your order has been placed successfully.</p>
-      <a href="{% url "ecomm:home" %}" class="btn btn-primary">Continue Shopping</a>
+<div class="row justify-content-center">
+  <div class="col d-flex justify-content-center">
+    <div class="card w-25 h-100 shadow p-3 mb-5 bg-white rounded d-flex justify-content-center">
+      <div class="card-body align-items-center">
+        <img src="{% static 'app/images/success.png' %}" width="100px" height="100px" />
+        <h1 class="card-title">Payment Successful!</h1>
+        <p class="card-text">Your order has been placed successfully.</p>
+        <a href="{% url  'ecomm:home' %}" class="btn btn-success">Continue Shopping</a>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock content %}
