@@ -23,6 +23,7 @@
                                 <a href="{% url 'ecomm:productdetail' favorite.product.slug %}" class="btn btn-primary">View Product</a>
                                 <form method="POST" action="{% url 'ecomm:toggle_favorite' %}">
                                     {% csrf_token %}
+                                    <input type="hidden" name="form_name" value="removeFav">
                                     <input type="hidden" name="product_id" value="{{ favorite.product.id }}">
                                     <button type="submit" class="btn btn-danger mt-2">
                                         Remove from Favorites

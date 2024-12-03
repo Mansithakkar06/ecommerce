@@ -1,5 +1,5 @@
 from .models import Category
-from .models import Cart
+from .models import Cart,CartProduct
 
 def categories_processor(request):
     return {'categories': Category.objects.all()}
@@ -11,6 +11,7 @@ def cart_count(request):
         if cart_id:
             cart = Cart.objects.filter(id=cart_id).first()
             if cart:
-                count = sum(item.quantity for item in cart.cartproduct_set.all())
+                # count = sum(item.quantity for item in cart.cartproduct_set.all())
+                count = CartProduct.objects.filter(cart = cart).count()
     return {'cart_count': count}
 

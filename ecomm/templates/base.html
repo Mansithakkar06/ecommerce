@@ -135,11 +135,15 @@
                         {% endif %}
                     </a>
                 </li>-->
+
+                {% if request.user.is_authenticated %}
                 <li class="nav-item mx-2">
-                    <a href="{% url 'ecomm:toggle_favorite' %}" class="nav-link text-white mt-1"><i style="font-size:23px " class="fa">&#xf004;</i>
+                    <a href="{% url 'ecomm:my_favorite' %}" class="nav-link text-white mt-1"><i style="font-size:23px " class="fa">&#xf004;</i>
                     </a>
 
                 </li>
+
+                {% endif %}
 
                 {% if request.user.customer %}
                 <li class="nav-item mx-2">

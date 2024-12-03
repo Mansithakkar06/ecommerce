@@ -31,27 +31,35 @@
             <!-- <form action="" method="POST">
                 <button class="btn btn-warning" type="submit">Buy Now</button>    
             </form> -->
+
+            <div class="d-flex inline-row">
             <form action="" method="post" style="display: contents;">
                 {% csrf_token %}
                 <input hidden type="text" value="{{product.id}}" name="pid">
-                <button class="btn btn-success" type="submit">Add to cart</button>
+                <button class="btn btn-success ms-2" type="submit">Add to cart</button>
             </form>
             
-            <a href="{% url 'ecomm:buynow' product.id %}" class="btn btn-warning">Buy Now</a>
-            <!--<a pid={{product.id}} class="minus-wishlist btn btn-danger shadow px-5 py-2 ms-4"><i class="fa fa-heart" style="color:orange"></i></a>-->
+            <a href="{% url 'ecomm:buynow' product.id %}" class="btn btn-warning ms-2">Buy Now</a>
+            
 
              <!-- Add to Favorites Button -->
-             <form id="favoriteForm" method="post" action="{% url 'ecomm:toggle_favorite' %}">
-                {% csrf_token %}
-                <input type="hidden" name="product_id" value="{{ product.id }}">
-                <button type="submit" id="favoriteButton" class="btn btn-danger">
-                    {% if is_favorite %}
-                        Remove from Favorites
-                    {% else %}
-                        Add to Favorites
-                    {% endif %}
-                </button>
-            </form>
+            
+                <form id="favoriteForm" method="post" action="{% url 'ecomm:toggle_favorite' %}" >
+                    {% csrf_token %}
+                    <input type="hidden" name="form_name" value="addRemoveFav">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">     
+                    <button type="submit" id="favoriteButton" class="btn ms-2" style="background:lightgray">
+                        {% if is_favorite %}
+
+                            <i class="fa fa-heart" style="color:red" ></i>
+                        {% else %}
+
+                            <i class="fa fa-heart" style="color:white" ></i>
+                        {% endif %}
+                    </button>
+                </form>
+
+        </div>
         </div>
     </div>
 </div>
@@ -66,11 +74,23 @@
                 'X-CSRFToken': form.querySelector('input[name=csrfmiddlewaretoken]').value,
             },
             body: new FormData(form),
-        }).then(response => response.json())
-          .then(data => {
-              alert(data.message);
-              location.reload(); // Refresh the page to update the button text
-          });
+        })
+        .then(response => {
+            if (response.status === 401) {
+                // Redirect to the login page for unauthorized access
+                window.location.href = "/login";
+            } else {
+                return response.json();
+            }
+        })
+        
+        .then(data => {
+            if (data) {
+                alert(data.message);
+                location.reload();
+            }
+        })
+        .catch(error => console.error('Error:', error));
     });
 </script>
 {% endblock content %}

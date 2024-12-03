@@ -385,14 +385,27 @@ class ToggleFavoriteView(View):
         product_id = request.POST.get('product_id')
         product = get_object_or_404(Product, id=product_id)
         customer = request.user.customer
+        
+        form_name = request.POST.get('form_name')  # Identify which form was submitted
+        
+        print
 
-        favorite, created = Favorite.objects.get_or_create(customer=customer, product=product)
+        if form_name == "removeFav":
+            Favorite.objects.filter(customer=customer, product=product).delete()
+            return redirect("ecomm:my_favorite")  # Redirect to home page
 
-        if not created:  # Already favorited, so remove it
-            favorite.delete()
-            return JsonResponse({"success": True, "message": "Removed from favorites"})
 
-        return JsonResponse({"success": True, "message": "Added to favorites"})
+        elif form_name == "addRemoveFav":
+            favorite, created = Favorite.objects.get_or_create(customer=customer, product=product)
+
+            if not created:  # Already favorited, so remove it
+                favorite.delete()
+                # return redirect("/")
+                return JsonResponse({"success": True, "message": "Removed from favorites"})
+
+            return JsonResponse({"success": True, "message": "Added to favorites"})
+        
+
     
 class FavoriteProductsView(EcomMixin, TemplateView):
     template_name = "toggle_favorite.html"
@@ -1060,11 +1073,6 @@ class ProductDeleteView(DeleteView):
     template_name = 'product_confirm_delete.html'  # Your confirmation template
     success_url = reverse_lazy('product_list')  # Redirect after successful deletion
 
-#payment
-import paypalrestsdk
-from django.shortcuts import redirect
-from django.http import JsonResponse
-
 # PayPal configuration
 paypalrestsdk.configure({
     "mode": settings.PAYPAL_MODE,  # 'sandbox' or 'live'
@@ -1075,7 +1083,11 @@ paypalrestsdk.configure({
 logger = logging.getLogger(__name__)
 
 def create_payment(request):
+    
+    print("in payment")
     if request.method == 'POST':
+        
+        print("in post")
         cart_id = request.session.get("cart_id")
         if not cart_id:
             return JsonResponse({"error": "No cart found"}, status=400)
@@ -1112,6 +1124,8 @@ def create_payment(request):
         })
 
         if payment.create():
+            
+            print("in payment gateway")
             approval_url = next(link.href for link in payment.links if link.rel == "approval_url")
             logger.info(f"Payment created successfully. Approval URL: {approval_url}")
             return redirect(approval_url)
@@ -1125,6 +1139,7 @@ def execute_payment(request):
     Execute PayPal payment after user approval.
     """
     payment_id = request.GET.get('paymentId')
+    cart_id = request.session.get('cart_id')    
     payer_id = request.GET.get('PayerID')
 
     payment = paypalrestsdk.Payment.find(payment_id)
@@ -1132,10 +1147,26 @@ def execute_payment(request):
     if payment.execute({"payer_id": payer_id}):
         cart_id = request.session.get("cart_id")
         if cart_id:
-            cart = Cart.objects.get(id=cart_id)
-            cart.delete()  # Clear cart after successful payment
+            cart_obj = Cart.objects.get(id=cart_id)
+             # Clear cart after successful payment
+            
+            order = Order.objects.create(
+            cart=cart_obj,
+            ordered_by=request.user.customer.full_name,
+            shipping_address=request.user.customer.address,
+            mobile=request.user.customer.mobile,
+            email=request.user.email,
+            subtotal=cart_obj.total,
+            discount=0,
+            total=cart_obj.total,
+            order_status="Order Received",
+        )
+            
+            order.save()
+            
             del request.session['cart_id']  # Clear session cart ID
-        return redirect('ecomm:home')  # Redirect to success page
+            
+        return render(request,"payment_success.html")  # Redirect to success page
     else:
         return JsonResponse({"error": payment.error}, status=400)
 
@@ -1145,90 +1176,3 @@ def cancel_payment(request):
     """
     return JsonResponse({"message": "Payment was cancelled."}, status=200)
 
-
-paypalrestsdk.configure({
-    "mode": settings.PAYPAL_MODE,  # sandbox or live
-    "client_id": settings.PAYPAL_CLIENT_ID,
-    "client_secret": settings.PAYPAL_CLIENT_SECRET
-})
-
-def create_payment(request):
-    """
-    This view will create a PayPal payment.
-    It prepares the payment details and redirects the user to PayPal for approval.
-    """
-    if request.method == 'POST':
-        items = []  # Items to be purchased
-        total_amount = 0  # Total amount to be charged
-
-        # Assuming you have an order model where cart items are stored
-        order = Order.objects.get(user=request.user, status="pending")
-
-        for item in order.items.all():
-            total_amount += item.product.selling_price * item.quantity
-            items.append({
-                "name": item.product.title,
-                "sku": item.product.id,
-                "price": item.product.selling_price,
-                "currency": "USD",
-                "quantity": item.quantity
-            })
-
-        # Create PayPal payment object
-        payment = paypalrestsdk.Payment({
-            "intent": "sale",
-            "payer": {
-                "payment_method": "paypal"
-            },
-            "transactions": [{
-                "item_list": {
-                    "items": items
-                },
-                "amount": {
-                    "total": str(total_amount),
-                    "currency": "USD"
-                },
-                "description": f"Order {order.id}"
-            }],
-            "redirect_urls": {
-                "return_url": request.build_absolute_uri('/execute_payment/'),
-                "cancel_url": request.build_absolute_uri('/cancel_payment/')
-            }
-        })
-
-        # Create the payment
-        if payment.create():
-            # Redirect the user to PayPal
-            approval_url = next(link.href for link in payment.links if link.rel == "approval_url")
-            return redirect(approval_url)
-        else:
-            return JsonResponse({"error": "Payment creation failed"}, status=400)
-    else:
-        return JsonResponse({"error": "Invalid request"}, status=400)
-
-def execute_payment(request):
-    """
-    This view will execute the PayPal payment after the user approves it.
-    """
-    payment_id = request.GET.get('paymentId')
-    payer_id = request.GET.get('PayerID')
-
-    payment = paypalrestsdk.Payment.find(payment_id)
-
-    if payment.execute({"payer_id": payer_id}):
-        # Payment executed successfully, now update the order status to 'completed'
-        order = Order.objects.get(user=request.user, status="pending")
-        order.status = "completed"
-        order.save()
-
-        # Redirect to a success page
-        return redirect('order_success')  # Add your success URL here
-    else:
-        # Handle payment failure
-        return JsonResponse({"error": "Payment execution failed"}, status=400)
-
-def cancel_payment(request):
-    """
-    This view will be triggered if the user cancels the payment on PayPal.
-    """
-    return JsonResponse({"error": "Payment cancelled by user"}, status=400)

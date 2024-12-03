@@ -40,13 +40,15 @@
                 {% csrf_token %}
                 {{ form|crispy }}
                 <!--<br><button class="btn btn-success">Proceed to pay</button>-->
+
+            </form>
                 <form method="POST" action="{% url 'ecomm:create_payment' %}" class="ms-3">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">
                         Pay with PayPal
                     </button>
                 </form>
-            </form>
+
         </div>
     </div>
 </div>

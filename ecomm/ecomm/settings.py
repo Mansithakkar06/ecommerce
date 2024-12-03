@@ -63,7 +63,7 @@ TEMPLATES = [
         'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': [
+            'context_processors': [ 
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -138,6 +138,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-PAYPAL_CLIENT_ID = 'ATic8mArY4ECeXZOJLy1tXfrDQU4yBFndtg-KBOCUtEz97IOkSbPtYv_GiK7nyAUgLJiQXwljlizqT8T'
-PAYPAL_CLIENT_SECRET = 'EGzuMG3YbN-8fl0FBdGKpZ0P2QFK1UWWatCY2WZXy0JIJs0CftxzTjmqsQ63ZPGZdW7SRig_hvWZH1ST'
+PAYPAL_CLIENT_ID = 'AWZxsHyXRre7o5H2qd-IftgS-J9E1nJgyV0tYv3NPGoZcRnj-EJE-BCvrskMS3IxD63N5lCYnFJeoy5s'
+PAYPAL_CLIENT_SECRET = 'EGT4Tx2K9Ro5tWgEqDwyDW1DfpcnRU667YNdsJrkyrlOL7JkHftPISI5Mi7pTLtO55tkol78mvkWgk3n'
 PAYPAL_MODE = 'sandbox'  # Change to 'live' when you're ready to go live
+

@@ -60,13 +60,23 @@
     {% for p in product_list %}
     <form action="" method="post" style="display: contents;">
       {% csrf_token %}
-    <div class="col-md-3 mt-3 mb-3">
+    <div class="d-flex flex-column justify-content-center m-4">
+      
+
       <a href="{% url 'ecomm:productdetail' p.slug %}"><img src="{{p.image.url}}" alt="product image" height="200px"
           width="200px"></a>
+
       <h5><a href="{% url 'ecomm:productdetail' p.slug %}">{{p.title}}</a></h5>
       <p class="mt-1"><del>Rs.{{p.marked_price}}.00 </del> &nbsp;&nbsp;<b> Rs.&nbsp;{{p.selling_price}}.00</b></p>
       <input hidden type="text" value="{{p.id}}" name="pid">
-      <button class="btn btn-success" type="submit">Add to cart</button>
+      
+
+      <button class="btn btn-success flex-grow-1" type="submit"  >Add to cart</button>
+
+
+
+
+    
       {% comment %} <a class="btn btn-success"  href="{% url 'ecomm:addtocart' p.id %}">Add to cart</a> {% endcomment %}
     </div>
   </form>
